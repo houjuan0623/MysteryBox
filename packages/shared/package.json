@@ -1,0 +1,1 @@
+{"name":"@mysterybox/shared","version":"0.1.0","private":true,"main":"src/index.ts","types":"src/index.ts","scripts":{"typecheck":"tsc --noEmit -p tsconfig.json"},"dependencies":{"zod":"^4.1.12"}}
