@@ -1,6 +1,17 @@
 # MysteryBox
 
-AI 工具发现与工作流指导：Next.js 前端 / NestJS API / PostgreSQL。英文产品界面，中文工程文档。
+AI 工具发现与工作流指导：Next.js 用户前台与管理端 / NestJS API / MongoDB。英文产品界面，中文工程文档。
+
+## 当前架构
+
+- `apps/web`：Next.js 用户前台，使用 shadcn/ui 与 Tailwind CSS。
+- `apps/admin`：独立的 Next.js 管理端，使用 shadcn/ui 与 Tailwind CSS。
+- `apps/api`：NestJS HTTP API，使用 MongoDB 官方 Node.js 驱动。
+- 持久化数据库为 MongoDB；多文档事务需要 replica set。未配置 `MONGODB_URI` 时的 MemoryStore 仅用于本地开发演示。
+
+三个应用分别运行、构建和部署，通过 HTTP API 通信。当前仓库已包含 MongoDB 仓储与配置；真实 MongoDB 集成、完整端到端流程和生产部署仍需按 [验收记录](docs/acceptance.md) 验证。
+
+[原始方案](docs/source-plan.md) 中的 PostgreSQL 是历史选择，原文保留用于追溯。当前数据库与三应用架构以 [ADR-008](docs/adr-latest-stack.md) 为准。
 
 ## 当前恢复状态
 
