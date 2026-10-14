@@ -36,9 +36,9 @@
 
 ## 后续交付评审事项
 
-- [ ] CHK016 MCP 最终 wire 工具名/schema、scope 名称和实现后契约测试已核对；当前只定义逻辑能力。[contracts](../contracts/README.md)
+- [x] CHK016 MCP 最终 wire 工具名/schema、scope 名称和13项局部契约测试已核对；另已核对真实Mongo并发/重启生命周期，区分其SDK内存传输与HTTP层。[contracts](../contracts/README.md)
 - [ ] CHK017 真实模型选择、凭据、供应商调用授权及生产基础设施门槛已关闭；这是上线门槛，不阻塞 demo。
 
 ## Notes
 
-要求存在与实现通过必须分开。上述 15 个已勾选项只完成需求评审；本功能尚未 converged。真实供应商门槛保持未关闭，不执行外部调用。
+要求存在与实现通过必须分开。上述 16 个已勾选项只完成需求评审；本功能尚未 converged。真实供应商门槛保持未关闭，不执行外部调用。

@@ -1,6 +1,6 @@
 {
-  "recordedAt": "2026-10-14T08:11:48.511234+00:00",
-  "scope": "New restoration scoped component and actual Mongo replica-set checks; not complete quality gate/HTTP/browser/provider verification.",
+  "recordedAt": "2026-10-14T08:23:52.109708+00:00",
+  "scope": "Final local expanded gate88 and browser12/6; published e4c714e CI verified separately with earlier browser8/6. Latest local delta not yet in that commit.",
   "web": {
     "exitCode": 0,
     "tests": {
@@ -10,19 +10,25 @@
       "evidence": "Core implementation report; latest privacy tests included"
     },
     "typecheck": "passed",
-    "build": "Initial Next.js16.4 production build passed; latest full build after dependency cleanup pending",
+    "build": "Final independent production build passed after dependency cleanup",
     "evidenceType": "Implementation-task report of retained tool output; no original stdout file saved",
     "browserCases": {
-      "passed": 8,
+      "passed": 12,
       "failed": 0,
       "log": "docs/qa/web-browser-verification.log",
-      "scope": "Real Chromium against local all-demo app; pending-request case uses interception",
-      "revisionBoundary": "Before removing unused shadcn CLI and byte-identical MIT CSS relocation; not a post-lockfile browser rerun"
+      "scope": "Real Chromium against local all-demo app; pending/request-loss interception and clipboard.writeText boundary stub",
+      "revisionBoundary": "After dependency cleanup and bounded four-case acceptance extension",
+      "newCoverage": [
+        "exact clipboard boundary payload",
+        "Back/Forward same Box and one creation",
+        "cancel/back-edit/revisit zero capture calls",
+        "server-committed503 retry same key/body/Box"
+      ]
     },
     "initialReportedAtApprox": "2026-10-14T07:13:00Z",
-    "latestReportedAtApprox": "2026-10-14T08:11:00Z",
+    "latestReportedAtApprox": "2026-10-14T08:22:25Z",
     "initialCommand": "npm run typecheck -w @mysterybox/web && npm run test -w @mysterybox/web && npm run build -w @mysterybox/web",
-    "latestTypecheckAndUnitEvidence": "Frontend implementation report: fresh typecheck +17 unit tests and scoped ESLint passed; full build after removing unused CLI pending"
+    "latestTypecheckAndUnitEvidence": "Final root check log,17 tests passed"
   },
   "admin": {
     "reportedAt": "2026-10-14T07:20:00Z",
@@ -43,13 +49,13 @@
       "scope": "Real Next proxy route allowlist and 16KB body rejection; no browser launch"
     },
     "typecheck": "passed with copied log",
-    "build": "Implementation-task report: independent Next16.4 production build passed; original stdout not saved",
+    "build": "Final independent production build passed after dependency cleanup",
     "browserCases": {
       "passed": 6,
       "failed": 0,
       "log": "docs/qa/admin-browser-verification.log",
       "scope": "5 browser UI cases with test API fixtures, 1 real Next proxy HTTP case",
-      "reportedAtApprox": "2026-10-14T08:10:00Z"
+      "reportedAtApprox": "2026-10-14T08:22:30Z"
     },
     "logsSha256": {
       "admin-unit-verification.log": "0a7215b7931e40b54d64b68d09bbf6d076cc937573dea71ef20a81cea364269d",
@@ -57,26 +63,26 @@
     }
   },
   "notCovered": [
-    "Final all-workspace quality gate after dependency cleanup",
-    "Actual role CLI grant in production",
-    "CI run in deployment environment",
+    "Latest local test/doc delta publication and CI",
+    "Actual production role provisioning",
     "Real AI/payment/email providers",
-    "Public production deployment"
+    "Phone external-URL availability",
+    "Public production deployment",
+    "Multi-node network partition/backup recovery"
   ],
   "api": {
     "tests": {
-      "passed": 65,
+      "passed": 66,
       "failed": 0,
       "skipped": 0
     },
     "includesMcpTests": 13,
-    "separateMongoTestNotIncluded": true,
-    "log": "docs/qa/api-component-verification.log",
-    "providers": "mock/demo only",
-    "fullQualityGate": "pending dependency cleanup and complete rerun"
+    "includesRealMongoTest": 1,
+    "log": "docs/qa/final-check.log",
+    "providers": "mock/demo only"
   },
   "mongo": {
-    "reportedAtApprox": "2026-10-14T08:05:00Z",
+    "reportedAtApprox": "2026-10-14T08:18:43Z",
     "engine": "Actual mongod 8.0.17 single-node replica set via mongodb-memory-server",
     "testFile": "apps/api/test/mongo.test.ts",
     "exitCode": 0,
@@ -84,7 +90,7 @@
     "failed": 0,
     "skipped": 0,
     "log": "docs/qa/mongo-replica-verification.log",
-    "logSha256": "26eb5e1285b4a67ab3852da8b7521c0017f0deea68edba11ae64a4254c6bcd2b",
+    "logSha256": "e32753e2c51a891660226b884b3e86dc13240420193e0ba2a9f349cf17c25fdd",
     "coverage": [
       "index initialization and repeated insert behavior",
       "20 competing business-guard updates across two Mongo connections",
@@ -94,21 +100,74 @@
       "read persistence after client close and reconnect",
       "real Nest HTTP member403/admin200/revoke403 with same session",
       "no optional activity without visitor identifier",
-      "mongod full stop/start then persistent Box read"
+      "mongod full stop/start then persistent Box read",
+      "concurrent OTP across two connections yields exactly one successful session",
+      "all three admin report HTTP routes guest/member/admin/revoked",
+      "actual Mongo analytics deduplication and prune",
+      "MCP SDK with in-memory protocol transport plus real Mongo:12 concurrent draft calls across two connections",
+      "draft/idempotency/audit persistence and identity isolation after mongod restart"
     ],
     "notCovered": [
       "multi-node failure election",
       "real network-partition/unknown-commit fault injection",
       "actual external provider calls",
       "production backup recovery"
-    ]
+    ],
+    "revisionBoundary": "Expanded assertions passed at08:18 and included in full local root gate08:20; not in staged e4c714e commit"
   },
   "logsSha256": {
-    "web-browser-verification.log": "af0cf4ec215e5d420d965e44090e21d73838651a7f2ba22ce569a892f1307de4",
+    "final-check.log": "68756af11ace3c99b0cbc165ff434101f257e1f76189d933f469a256df95e373",
+    "web-browser-verification.log": "f2622e564574ebba526da97c0b9b2d1b9679a854853c8140c59a6cf193b1d9be",
     "api-component-verification.log": "f5db364a3f71294a3f3cedd0f268c9cd941b611481f00cf37b5e85a85acf678e",
-    "admin-browser-verification.log": "3f8791d44e7d3f82086691dfe77dd194f63055f1f50df7aaec97f4038801a97c",
+    "admin-browser-verification.log": "38d99174899c8c22bfbe423de48345506af358df785201ce8edcf01881e5273d",
     "admin-unit-verification.log": "0a7215b7931e40b54d64b68d09bbf6d076cc937573dea71ef20a81cea364269d",
-    "mongo-replica-verification.log": "26eb5e1285b4a67ab3852da8b7521c0017f0deea68edba11ae64a4254c6bcd2b",
+    "mongo-replica-verification.log": "e32753e2c51a891660226b884b3e86dc13240420193e0ba2a9f349cf17c25fdd",
     "admin-proxy-verification.log": "c7f905a83e8c79818bd582cd7ba96b4d38f6c1849bf04421fc0fe0ae57ac9a54"
+  },
+  "finalLocalGate": {
+    "reportedAtApprox": "2026-10-14T08:20:00Z",
+    "command": "npm run check with real Mongo fixture enabled",
+    "exitCode": 0,
+    "lint": "passed",
+    "prettier": "passed",
+    "typecheck": "all workspaces passed",
+    "tests": {
+      "passed": 88,
+      "failed": 0,
+      "skipped": 0,
+      "breakdown": {
+        "admin": 5,
+        "apiIncludingMongoAndMcp": 66,
+        "web": 17
+      }
+    },
+    "builds": ["@mysterybox/admin", "@mysterybox/api", "@mysterybox/web"],
+    "http": {
+      "passed": 13,
+      "report": "docs/qa/http-smoke-restored.json"
+    },
+    "audit": {
+      "totalVulnerabilities": 0,
+      "report": "docs/qa/npm-audit-final.json"
+    },
+    "log": "docs/qa/final-check.log",
+    "includesExpandedMongoAssertions": true
+  },
+  "publishedStage": {
+    "asOf": "2026-10-14T08:22:00Z",
+    "commit": "e4c714e8aa58e6df6ec74ab30360074a4c142491",
+    "files": 223,
+    "ciUrl": "https://github.com/houjuan0623/MysteryBox/actions/runs/38534184679",
+    "ciStatusAtThatTime": "success",
+    "latestSupplementalTestsIncluded": false,
+    "evidence": "Publisher verification relayed by core task",
+    "ciEvidence": {
+      "tests": 88,
+      "skipped": 0,
+      "http": 13,
+      "webBrowser": 8,
+      "adminBrowser": 6,
+      "auditVulnerabilities": 0
+    }
   }
 }

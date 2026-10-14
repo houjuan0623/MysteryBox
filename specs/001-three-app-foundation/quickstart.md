@@ -36,15 +36,12 @@ npm run build -w @mysterybox/admin
 使用测试用 replica set 和隔离测试库，设置 TEST_MONGODB_URI；不要指向生产数据库。索引和 seed 按 runbook 执行。真实 Mongo 测试必须报告版本、拓扑、退出码、跳过数量和失败，不可只测内存。
 
 ```bash
-npm run typecheck
-npm test
-npm run build -w @mysterybox/api
-npm run build -w @mysterybox/web
-npm run build -w @mysterybox/admin
-npm run test:http
+RUN_MONGO_TESTS=1 npm run check
+npm run test:e2e
+npm run test:ui -w @mysterybox/admin
 ```
 
-根聚合命令和 lint/format 脚本可能仍在恢复整合；执行前检查 package.json，缺少脚本记录为开放任务，不能假定 npm run check 已覆盖 Admin。浏览器与真实后端集成另行运行并保留日志。
+根 `npm run check` 当前覆盖lint、格式、三个应用/共享包类型、单元、三个构建和HTTP。需要真实Mongo时显式设置 `RUN_MONGO_TESTS=1`（或有效的隔离TEST_MONGODB_URI），否则Mongo用例可能跳过；最终已通过的运行设置了该开关且0跳过。Web/Admin浏览器仍是单独命令，不属于根check。
 
 ## 4. 按任务实现与回填证据
 

@@ -71,5 +71,7 @@
     "Real providers",
     "Production deployment"
   ],
-  "overallFeatureVerdict": "Not converged; Mongo/API/admin backend/MCP and final integration gates remain open."
+  "overallFeatureVerdict": "Latest local checks passed; exact current scope and remaining gates are in specs/001-three-app-foundation/convergence.md.",
+  "overallFeatureVerdictAtAdoption": "Not converged; Mongo/API/admin backend/MCP and final integration gates remain open.",
+  "latestSpecKitReverification": "../verification/spec-kit-final-verification.json"
 }

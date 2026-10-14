@@ -1,0 +1,23 @@
+{
+  "verifiedAtUtc": "2026-10-14T08:24:52.032853+00:00",
+  "officialCliVersion": "1.2.0",
+  "artifactCount": 19,
+  "officialPrerequisites": "exit0",
+  "bashSyntax": "all6passed",
+  "format": "passed",
+  "relativeLinks": "passed",
+  "functionalRequirements": 20,
+  "allRequirementsTraced": true,
+  "tasks": 35,
+  "completedTasks": 20,
+  "upstreamFilesUnchanged": 29,
+  "projectConstitutionIntentionallyFilled": true,
+  "sourcePlanSha256Unchanged": true,
+  "initialCliInit": "actually executed successfully; see upstream/cli-init.log",
+  "noWorkflowExecution": true,
+  "noSpecKitMcpServerStarted": true,
+  "noNativeSlashCommandRegistrationClaimed": true,
+  "finalDocumentationFreeze": true,
+  "unverifiedCompositeTasks": 15,
+  "currentEvidence": "current-evidence.json"
+}

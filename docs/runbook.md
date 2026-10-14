@@ -10,7 +10,7 @@
 
 ## 1. 环境与启动
 
-Node.js24.x（>=24 <25），npm workspaces；Docker Compose可选，本地数据库为MongoDB8.0 replica set。恰好三个应用：Web3000、Admin3001、NestJS API4000/api。以下从项目根运行；恢复期间实际目录为MysteryBox-restoration，是否建立~/MysteryBox由主任务确认。
+Node.js24.x（>=24 <25），npm workspaces；Docker Compose可选，本地数据库为MongoDB8.0 replica set。恰好三个应用：Web3000、Admin3001、NestJS API4000/api。以下从项目根运行。实际目录为 /workspace/shared/MysteryBox-restoration；dot 云电脑桌面用户的 ~/MysteryBox 快捷符号链接已于 2026-10-14 08:11 UTC 创建，指向此目录。不同执行器的 home 可能不同，绝对路径是本次恢复工作的基准。
 
 ```bash
 cd /workspace/shared/MysteryBox-restoration
@@ -105,17 +105,22 @@ npm test
 npm run build -w @mysterybox/api
 npm run build -w @mysterybox/web
 npm run build -w @mysterybox/admin
-npm run check
+RUN_MONGO_TESTS=1 npm run check
 npm run test:e2e
+npm run test:ui -w @mysterybox/admin
 # API构建后运行demo HTTP检查
 node scripts/http-smoke.mjs
 ```
 
 必须运行ESLint、Prettier检查、TypeScript、单元、三个应用构建和HTTP测试；EditorConfig控制编辑格式。根check的实际覆盖以package.json为准，缺失某项不能视为该项通过。真实供应商和浏览器E2E仍单独验收。Mongo 真库用 TEST_MONGODB_URI 或 npm run test:mongo 显式启动 MongoDB 8.0.17 单节点 replica-set fixture；默认 npm test 在未设置 RUN_MONGO_TESTS=1/TEST_MONGODB_URI 时跳过 Mongo 集成，必须在报告中注明。fixture 仍是真正的 mongod，不是 MemoryStore。外部 URI 测试使用随机名称的 mysterybox_test_* 数据库，当前不自动删除该外部数据库；需按授权与保留政策清理，绝不能指向生产。测试会写demo订单/测试记录，禁止生产库。
 
-Playwright 的 Web 配置使用 3000 与 Chromium；Admin 有独立 test:ui 配置。最新原生运行 Web 8/8、Admin 6/6 已通过，包含实际浏览器用例；Admin 五个 UI 用例使用 API fixture，第六项是运行中代理 HTTP 检查。真实 Nest/Mongo 角色授权另由集成测试验证，不能混淆这三层证据。环境受限时应记录浏览器启动阻塞，不把 HTTP 测试冒充浏览器；最新范围见 acceptance.md。
+Playwright 的 Web 配置使用 3000 与 Chromium；Admin 有独立 test:ui 配置。最新原生运行 Web 12/12、Admin 6/6 已通过，包含实际浏览器用例；Admin 五个 UI 用例使用 API fixture，第六项是运行中代理 HTTP 检查。真实 Nest/Mongo 角色授权另由集成测试验证，不能混淆这三层证据。环境受限时应记录浏览器启动阻塞，不把 HTTP 测试冒充浏览器；最新范围见 acceptance.md。
 
-http-smoke.mjs旧版使用独立14000端口、已构建API、强制demo，生成docs/qa/http-smoke.json。恢复目录必须新跑才可出现新的通过报告；历史报告另命名并明确来源。
+当前 scripts/http-smoke.mjs 使用独立 14000 端口、已构建 API、强制 demo，报告写入 docs/qa/http-smoke-restored.json。旧主机的历史报告单独保存在 docs/qa/historical-http-smoke.json，不能与新运行混用。
+
+当前本地最终证据：根质量门禁通过，Admin 5 + API 66（含真 Mongo 1）+ Web 17 共 88 项、0 跳过；三个应用生产构建、HTTP13、Web 浏览器12、Admin UI/代理6通过，npm audit 0。这些是最新本地结果；已发布 e4c714e 阶段的 CI 另已通过，但不含后续测试增强。真实供应商和公网/手机访问仍需独立验证。运行时应用代码不因此获得真实凭据或收款授权。
+
+可选 NEXT_DIST_DIR 用于 Next 开发/验证产物隔离，默认 .next；同一实例 build/start 必须使用相同目录。PLAYWRIGHT_EXECUTABLE_PATH 可选择已安装浏览器，ADMIN_TEST_URL 可选择管理端测试入口；测试只能指向明确的本地隔离 demo，不指向生产。APP_LIVE_TEST 默认为 0，没有另行批准的模型/预算和安全凭据交接不要启用。
 
 ## 5. 本地API演练
 

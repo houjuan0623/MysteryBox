@@ -1,4 +1,4 @@
-✔ MongoDB replica-set indexes, atomic contention, rollback and restart persistence (4685.000078ms)
+✔ MongoDB replica-set contention, admin/OTP, analytics and MCP restart persistence (3744.469776ms)
 ℹ tests 1
 ℹ suites 0
 ℹ pass 1
@@ -6,4 +6,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 5274.708316
+ℹ duration_ms 4350.904406

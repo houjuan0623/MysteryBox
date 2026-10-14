@@ -4,7 +4,7 @@
 
 ## 当前工程基线
 
-用户最新指定NestJS + MongoDB + 独立运行/构建/部署的Next.js Web与Admin，恰好三个应用；真实AI唯一Vercel网关。见[ADR-008](adr-latest-stack.md)。恢复后须重新运行全部质量检查；Mongo 已取得局部真副本集测试结果，完整 HTTP、故障恢复和生产验收仍未完成。
+用户最新指定NestJS + MongoDB + 独立运行/构建/部署的Next.js Web与Admin，恰好三个应用；真实AI唯一Vercel网关。见[ADR-008](adr-latest-stack.md)。恢复版已重新通过本地质量门禁、HTTP、浏览器与 Mongo 真副本集检查；e4c714e 阶段 CI 已通过；最新增量 CI、真实服务、复杂故障恢复和生产仍独立待验收。
 
 ## 阶段0：需求验证
 

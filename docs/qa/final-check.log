@@ -1,0 +1,253 @@
+
+> mysterybox@0.1.0 check
+> npm run lint && npm run format:check && npm run typecheck && npm test && npm run build && npm run test:http
+
+
+> mysterybox@0.1.0 lint
+> eslint apps packages scripts
+
+
+> mysterybox@0.1.0 format:check
+> prettier --check apps packages scripts *.json *.ts *.mjs
+
+Checking formatting...
+All matched files use Prettier code style!
+
+> mysterybox@0.1.0 typecheck
+> npm run typecheck --workspaces --if-present
+
+
+> @mysterybox/admin@0.1.0 typecheck
+> tsc --noEmit
+
+
+> @mysterybox/api@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> @mysterybox/web@0.1.0 typecheck
+> tsc --noEmit
+
+
+> @mysterybox/shared@0.1.0 typecheck
+> tsc --noEmit -p tsconfig.json
+
+
+> mysterybox@0.1.0 test
+> npm run test --workspaces --if-present
+
+
+> @mysterybox/admin@0.1.0 test
+> node --test test/*.test.mjs
+
+✔ default window is seven UTC calendar days across month boundaries (2.035608ms)
+✔ selected dates include both complete UTC calendar days (0.45854ms)
+✔ date validation rejects invalid dates, reversed and excessive windows (0.375073ms)
+✔ missing and invalid timestamps do not invent sign-in activity (23.047877ms)
+✔ exactly 31 days is accepted, 32 days is rejected (0.816133ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 97.196115
+
+> @mysterybox/api@0.1.0 test
+> node --import tsx --test test/*.test.ts src/providers/*.test.ts src/mcp/*.test.ts
+
+✔ MCP is disabled by default and incomplete or invalid enabled configuration fails closed (40.167136ms)
+✔ strict bearer authentication, Host/Origin and local socket boundaries (35.162755ms)
+✔ real SDK client initializes, lists tools and calls aggregate statistics and private draft tools over HTTP (67.531414ms)
+✔ raw JSON-RPC initialize negotiates a real protocol and scope restrictions apply to discovery and direct calls (19.535715ms)
+✔ strict bounded schemas reject extra fields, invalid types and ranges without persisting drafts (37.542594ms)
+✔ draft idempotency is atomic under concurrent calls and rejects payload conflicts (51.874259ms)
+✔ drafts and idempotency keys are isolated by principal; pagination and type filters are bounded (37.184547ms)
+✔ audit failure rolls back draft and receipt, returns sanitized failure and permits safe retry (17.726651ms)
+✔ large and malformed HTTP input is rejected with safe errors; only draft collections can be mutated (13.688956ms)
+✔ aggregate result excludes seeded user, email, visitor and raw activity identities (10.30042ms)
+✔ per-identity draft cap preserves existing records and idempotent replays (30.776563ms)
+✔ fixed request guard caps anonymous attempts independently of valid callers (157.95523ms)
+✔ existing Nest API bootstrap serves MCP before cookie origin checks while preserving ordinary API boundaries (1543.727863ms)
+✔ all demo adapters are deterministic and make zero network requests (23.41356ms)
+✔ demo capture cannot be associated with another internal order (0.927353ms)
+✔ AI rejects malicious IDs, URL fields, duplicate recommendations, and foreign workflow IDs (2.233367ms)
+✔ OpenAI uses strict catalog schema and store false (56.10191ms)
+✔ OpenAI refusal, incomplete, malformed, HTTP error and timeout are explicit failures (16.58773ms)
+✔ Vercel uses fixed Responses endpoint, gateway auth and provider/model ID (3.384028ms)
+✔ Vercel malicious output is rejected without demo fallback (2.706584ms)
+✔ provider timeout aborts the request (11.714941ms)
+✔ real mode never silently falls back without credentials or explicit PayPal mode (0.982218ms)
+✔ PayPal create controls amount/merchant/host/return and stable idempotency (6.936753ms)
+✔ PayPal rejects malicious approval links (2.468476ms)
+✔ PayPal capture validates before charging and reads final state (7.100479ms)
+✔ PayPal never captures unapproved or cross-order payment (4.401313ms)
+✔ completed retries and pending captures do not charge again (3.204836ms)
+✔ all amount/currency/custom/merchant/order/capture mismatches fail closed (1.37906ms)
+✔ PayPal requires COMPLETED, never refunded, declined or failed (0.611873ms)
+✔ capture timeout and post-capture read failure remain indeterminate (3.441758ms)
+✔ inspect is read-only and rejects mismatched merchant (6.403019ms)
+✔ unsigned webhook is rejected without network (0.402221ms)
+✔ webhook uses configured ID and official signature verification (2.918004ms)
+✔ Resend escapes HTML and uses catalog links/text/fixed sender/idempotency (2.522369ms)
+✔ Resend failures do not claim sent or leak upstream data (1.04158ms)
+✔ invalid email/code/sender/catalog links are rejected before sending (0.824051ms)
+✔ raw webhook JSON is preserved in verification and mismatched raw body is rejected (1.137025ms)
+✔ reviewed code gate cannot be bypassed with environment flags (1.799284ms)
+✔ reservation persists before fake transmission, omits secrets, settles verified usage (40.961815ms)
+✔ unknown outcomes reserve full cost across restart; concurrent guard locks fail (5.277216ms)
+✔ 20 actual attempts is a hard limit even with minimal successful usage (17.092632ms)
+✔ $1 limit reserves worst-case tokens before sending (7.351731ms)
+✔ missing usage retains full reservation and halts further calls (2.116033ms)
+✔ credit or permission rejection halts UI requests and restarts (2.007172ms)
+✔ alternative endpoint/model/fallback/output limit is denied before transport (1.342008ms)
+✔ corrupt or changed ledger fails closed rather than resets budget (1.072256ms)
+✔ four interests create valid free boxes and require unguessable access tokens (22.831064ms)
+✔ free idempotency survives concurrent retries and rejects mismatched inputs (1.716002ms)
+✔ server controls price and captures exactly once under concurrent requests (7.207951ms)
+✔ paid order remains paid after AI failure and retry does not charge again (2.32156ms)
+✔ pending payment cannot unlock a box (5.479638ms)
+✔ capture association cannot be reused for another order (2.028013ms)
+✔ email failure preserves the box and permits an independent idempotent retry (4.084074ms)
+✔ one-time codes have attempt limit, expire, and cannot be reused (3.007958ms)
+✔ two-account history, favorites, guest claim and logout stay isolated (3.521268ms)
+✔ network-labelled unknown Mongo commit retries commit only once without replaying callback (104.555016ms)
+✔ MongoDB replica-set contention, admin/OTP, analytics and MCP restart persistence (4128.145889ms)
+✔ admin authorization is enforced for guest/member and allows server role only (1.469909ms)
+✔ production fails closed without database, strong secrets, exact HTTPS and real modes (0.656913ms)
+✔ signed visitor identity rejects tampering and distinguishes visitors (0.758302ms)
+✔ streaming body limits reject oversized chunks without Content-Length (6.11249ms)
+✔ persisted failed email is retried after browser closes without regenerating the box (27.723264ms)
+✔ concurrent automatic email retries respect attempts and stale cutoff (4.852368ms)
+✔ analytics deduplicates resource events and uses UTC exclusive boundaries and hashed visitor IDs (1.072768ms)
+✔ analytics pruning removes only events older than30 days and preserves users (0.242121ms)
+✔ webhook-only payment is counted durably even when generation fails (1.160618ms)
+ℹ tests 66
+ℹ suites 0
+ℹ pass 66
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 4947.042752
+
+> @mysterybox/web@0.1.0 test
+> node --test test/*.test.mjs
+
+✔ a retry retains its idempotency key; changed inputs get a new key (1.831025ms)
+✔ completed requests reset their key without dropping access tokens (0.550928ms)
+✔ checkout records survive client navigation within the session (1.086821ms)
+✔ corrupt browser state is handled without exposing or inventing a token (0.388176ms)
+✔ API requests keep cookies same-origin and send JSON plus explicit access headers (22.213222ms)
+✔ API failures preserve the service error and safely tolerate non-JSON errors (1.22023ms)
+✔ price formatter displays the configured one-time USD amount (12.59688ms)
+✔ catalog calendar dates do not shift in a west-of-UTC browser timezone (4.05736ms)
+✔ analytics collapses box IDs and excludes other routes and query text (0.305108ms)
+✔ Do Not Track prevents generating any analytics visitor (0.306828ms)
+✔ analytics opt-out removes the session ID and stops optional headers (0.657753ms)
+✔ enabled analytics adds only a random session UUID header to normal API calls (0.546592ms)
+✔ analytics server snapshot is unknown until the browser preference is read (0.153821ms)
+✔ reading a saved opt-out clears a stale session visitor (0.114179ms)
+✔ Do Not Track changes clear a visitor created earlier in the session (0.111005ms)
+✔ unavailable preference storage fails closed (0.179334ms)
+✔ an opt-out stops this tab even when saving the preference fails (0.496193ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 417.038278
+
+> mysterybox@0.1.0 build
+> npm run build --workspaces --if-present
+
+
+> @mysterybox/admin@0.1.0 build
+> next build
+
+▲ Next.js 16.4.0 (Turbopack)
+✓ Running next.config.ts took 21ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 415ms
+  Running TypeScript ...
+
+  We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+  	- include was updated to add '.next-verify/types/**/*.ts'
+  	- include was updated to add '.next-verify/dev/types/**/*.ts'
+
+  Finished TypeScript in 1701ms ...
+  Collecting page data using 6 workers ...
+  Generating static pages using 6 workers (0/4) ...
+  Generating static pages using 6 workers (1/4) 
+  Generating static pages using 6 workers (2/4) 
+  Generating static pages using 6 workers (3/4) 
+✓ Generating static pages using 6 workers (4/4) in 632ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/[...path]
+└ ○ /robots.txt
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> @mysterybox/api@0.1.0 build
+> tsc -p tsconfig.json
+
+
+> @mysterybox/web@0.1.0 build
+> next build
+
+▲ Next.js 16.4.0 (Turbopack)
+✓ Running next.config.ts took 24ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 506ms
+  Running TypeScript ...
+
+  We detected TypeScript in your project and reconfigured your tsconfig.json file for you.
+  The following suggested values were added to your tsconfig.json. These values can be changed to fit your project's needs:
+
+  	- include was updated to add '.next-verify/types/**/*.ts'
+  	- include was updated to add '.next-verify/dev/types/**/*.ts'
+
+  Finished TypeScript in 2.0s ...
+  Collecting page data using 8 workers ...
+  Generating static pages using 8 workers (0/9) ...
+  Generating static pages using 8 workers (2/9) 
+  Generating static pages using 8 workers (4/9) 
+  Generating static pages using 8 workers (6/9) 
+✓ Generating static pages using 8 workers (9/9) in 777ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ○ /account
+├ ƒ /api/[...path]
+├ ƒ /box/[id]
+├ ○ /checkout/return
+├ ○ /discover
+├ ○ /icon.svg
+├ ○ /privacy
+└ ○ /terms
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+> mysterybox@0.1.0 test:http
+> node scripts/http-smoke.mjs
+
+HTTP smoke 13/13 passed

@@ -20,7 +20,7 @@
 | MCP Draft    | id、principalId、kind/content、createdAt、幂等引用          | 同主体同写键同内容返回同一记录；列表按授权主体隔离       |
 | MCP Audit    | requestId、principalId、工具/操作、结果、时间               | 无原始令牌、密钥或草稿正文；失败也按允许范围记审计       |
 
-MCP 聚合的具体存储 `kind` 和最终字段需在实现后与此模型核对，不提前宣称已落库。
+MCP 已实现 `mcp_drafts`、`mcp_idempotency`、`mcp_audit`；草稿字段为 id/owner/type/title/content/tags/status/createdAt，status 固定 draft。13项HTTP/语义测试之外，08:18:43扩展真Mongo测试已验证这三类文档：双连接12并发仅一draft/receipt、冲突、审计脱敏、完整mongod重启后重放/列出与审计持久化。Mongo链路使用官方SDK InMemoryTransport，不能描述为同一HTTP数据库端到端测试。
 
 ## 状态与一致性
 

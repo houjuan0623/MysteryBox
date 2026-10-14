@@ -8,9 +8,9 @@ AI 工具发现、Prompt 与工作流指导。三个独立应用，共享 TypeSc
 | `apps/admin` | Next.js + shadcn/ui + Tailwind CSS | 3001 | `npm run dev -w @mysterybox/admin` |
 | `apps/api` | NestJS + MongoDB 官方驱动 | 4000 | `npm run dev -w @mysterybox/api` |
 
-## 当前开发状态
+## 当前验收范围
 
-当前为持续同步的开发版本。局部验证记录不代表本次完整快照已通过全部检查；MongoDB、权限、MCP、浏览器和 CI 的实际验收范围请查看 [验收状态](docs/acceptance.md)。
+本地验证与远端 CI 结果按对应代码版本分别记录，详见 [验收状态](docs/acceptance.md)。真实供应商调用和生产部署不在本轮本地验收范围。
 
 ## 启动
 

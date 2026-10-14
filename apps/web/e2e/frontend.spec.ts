@@ -241,3 +241,209 @@ test("analytics can be disabled without affecting discovery", async ({ page }) =
   expect(leakedHeaders).toEqual([]);
   expect(activityRequests).toEqual([]);
 });
+
+test("copy prompt writes the exact displayed text to the clipboard", async ({ page }) => {
+  const clipboardWrites: string[] = [];
+  await page.exposeFunction("captureClipboardWrite", (text: string) => {
+    clipboardWrites.push(text);
+  });
+  // 浏览器权限因运行环境而异：只替换系统剪贴板边界，仍通过真实按钮调用并核对完整内容。
+  await page.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: (text: string) =>
+          (
+            window as unknown as Window & {
+              captureClipboardWrite: (value: string) => Promise<void>;
+            }
+          ).captureClipboardWrite(text),
+      },
+    });
+  });
+  await openFreeBox(page);
+  const prompt = await page.locator(".prompt-card > p").textContent();
+  expect(prompt?.trim().length).toBeGreaterThan(0);
+  await page.getByRole("button", { name: "Copy prompt", exact: true }).click();
+  await expect(page.getByRole("button", { name: "Copied", exact: true })).toBeVisible();
+  expect(clipboardWrites).toEqual([prompt]);
+});
+
+test("browser Back and Forward restore the same result without creating another box", async ({
+  page,
+}) => {
+  let creations = 0;
+  page.on("request", (request) => {
+    if (
+      request.method() === "POST" &&
+      new URL(request.url()).pathname === "/api/boxes/free"
+    )
+      creations += 1;
+  });
+  await openFreeBox(page);
+  const resultUrl = page.url();
+  const title = await page.locator(".result-header h1").textContent();
+  const prompt = await page.locator(".prompt-card > p").textContent();
+  const officialUrl = await page
+    .locator('.recommendation a[target="_blank"]')
+    .first()
+    .getAttribute("href");
+  const boxId = new URL(resultUrl).pathname.split("/").at(-1)!;
+  const savedIds = await page.evaluate(() =>
+    Object.keys(JSON.parse(sessionStorage.getItem("mysterybox:boxes") || "{}")),
+  );
+  expect(savedIds).toEqual([boxId]);
+
+  await page.goBack();
+  await expect(page).toHaveURL(/\/discover\?interest=developer$/);
+  await expect(page.locator(".discovery-form")).toBeVisible();
+  await expect(page.locator(".recommendation")).toHaveCount(0);
+  await page.goForward();
+  await expect(page).toHaveURL(resultUrl);
+  await expect(page.locator(".recommendation")).toHaveCount(1);
+  await expect(page.locator(".result-header h1")).toHaveText(title!);
+  await expect(page.locator(".prompt-card > p")).toHaveText(prompt!);
+  await expect(
+    page.locator('.recommendation a[target="_blank"]').first(),
+  ).toHaveAttribute("href", officialUrl!);
+  expect(
+    await page.evaluate(() =>
+      Object.keys(JSON.parse(sessionStorage.getItem("mysterybox:boxes") || "{}")),
+    ),
+  ).toEqual([boxId]);
+  expect(creations).toBe(1);
+});
+
+test("demo checkout back-to-edit and cancellation return never unlock a premium box", async ({
+  page,
+}) => {
+  const orderCreations: string[] = [];
+  const paymentCompletions: string[] = [];
+  page.on("request", (request) => {
+    if (request.method() !== "POST") return;
+    const path = new URL(request.url()).pathname;
+    if (path === "/api/checkout/orders") orderCreations.push(path);
+    if (/^\/api\/checkout\/orders\/[^/]+\/(capture|demo-complete)$/.test(path))
+      paymentCompletions.push(path);
+  });
+  const expectLocked = async () => {
+    await expect(page.locator(".recommendation")).toHaveCount(0);
+    expect(paymentCompletions).toEqual([]);
+    expect(
+      await page.evaluate(() =>
+        Object.keys(JSON.parse(sessionStorage.getItem("mysterybox:boxes") || "{}")),
+      ),
+    ).toEqual([]);
+  };
+  await page.goto("/discover?interest=business&tier=premium");
+  await page.getByRole("button", { name: "Try premium demo", exact: true }).click();
+  await expect(page).toHaveURL(/\/checkout\/return\?order=/);
+  const checkoutUrl = page.url();
+  await expect(
+    page.getByRole("button", { name: "Open demo premium box", exact: true }),
+  ).toBeEnabled();
+  await expectLocked();
+
+  await page.getByRole("link", { name: "Back to discovery", exact: true }).click();
+  await expect(page).toHaveURL(/\/discover$/);
+  const goal = page.getByRole("textbox", { name: /What would you like to do/ });
+  await expect(goal).toBeEnabled();
+  await goal.fill("Revise my plan before choosing a box");
+  await expect(goal).toHaveValue("Revise my plan before choosing a box");
+  await expectLocked();
+
+  // 模拟支付服务回到已有取消路由；没有访问外部支付服务，也不调用完成接口。
+  await page.goto("/discover?cancelled=1");
+  await expect(
+    page.getByText(
+      "Checkout was canceled. No new box was opened. You can try again whenever you’re ready.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Open my free box", exact: true }),
+  ).toBeEnabled();
+  await expectLocked();
+
+  // 返回原订单也必须继续等待用户显式确认，不能因为历史记录或已有令牌自动开盒。
+  await page.goto(checkoutUrl);
+  await expect(
+    page.getByRole("button", { name: "Open demo premium box", exact: true }),
+  ).toBeEnabled();
+  await expectLocked();
+  expect(orderCreations).toHaveLength(1);
+});
+
+test("a free-box 503 retry reuses its key and returns the one box already created", async ({
+  page,
+}) => {
+  const keys: string[] = [];
+  const bodies: (string | null)[] = [];
+  const serverBoxIds: string[] = [];
+  const serverStatuses: number[] = [];
+  await page.route("**/api/boxes/free", async (route) => {
+    const request = route.request();
+    keys.push(request.headers()["idempotency-key"] || "");
+    bodies.push(request.postData());
+    // 第一次请求真实到达本地模拟服务并保存盒子，再向 UI 返回 503，覆盖“已提交但响应丢失”。
+    const response = await route.fetch();
+    serverStatuses.push(response.status());
+    const body = await response.json();
+    if (body.box?.id) serverBoxIds.push(body.box.id);
+    if (keys.length === 1) {
+      await route.fulfill({
+        response,
+        status: 503,
+        json: {
+          error: {
+            code: "TEMPORARILY_UNAVAILABLE",
+            message: "Temporary connection problem. Please try your box again.",
+          },
+        },
+      });
+    } else {
+      await route.fulfill({ response });
+    }
+  });
+  await page.goto("/discover?interest=student");
+  const goal = page.getByRole("textbox", { name: /What would you like to do/ });
+  await goal.fill("Create a practical revision plan");
+  const submit = page.getByRole("button", { name: "Open my free box", exact: true });
+  await submit.click();
+  await expect(page.locator(".discovery-form").getByRole("alert")).toContainText(
+    "Temporary connection problem. Please try your box again.",
+  );
+  await expect(page).toHaveURL(/\/discover\?interest=student$/);
+  await expect(submit).toBeEnabled();
+  await expect(goal).toHaveValue("Create a practical revision plan");
+  await expect(page.locator(".discovery-form")).toHaveAttribute("aria-busy", "false");
+  expect(keys).toHaveLength(1);
+  expect(keys[0]).toMatch(/^[0-9a-f-]{36}$/i);
+  expect(serverStatuses).toEqual([200]);
+  expect(serverBoxIds).toHaveLength(1);
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("mysterybox:boxes")),
+  ).toBeNull();
+  expect(
+    await page.evaluate(
+      () => JSON.parse(sessionStorage.getItem("mysterybox:request:free") || "null")?.id,
+    ),
+  ).toBe(keys[0]);
+
+  await submit.click();
+  await expect(page).toHaveURL(/\/box\/[^/?]+$/);
+  await expect(page.locator(".recommendation")).toHaveCount(1);
+  expect(keys).toEqual([keys[0], keys[0]]);
+  expect(bodies).toEqual([bodies[0], bodies[0]]);
+  expect(serverStatuses).toEqual([200, 200]);
+  expect(serverBoxIds).toEqual([serverBoxIds[0], serverBoxIds[0]]);
+  expect(new URL(page.url()).pathname).toBe(`/box/${serverBoxIds[0]}`);
+  expect(
+    await page.evaluate(() =>
+      Object.keys(JSON.parse(sessionStorage.getItem("mysterybox:boxes") || "{}")),
+    ),
+  ).toEqual([serverBoxIds[0]]);
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("mysterybox:request:free")),
+  ).toBeNull();
+});

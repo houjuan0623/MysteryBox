@@ -1,0 +1,21 @@
+
+> mysterybox@0.1.0 test:e2e
+> playwright test
+
+
+Running 12 tests using 1 worker
+
+  ✓   1 [chromium] › apps/web/e2e/frontend.spec.ts:24:5 › free discovery has a prompt, official link, steps, and survives refresh (2.4s)
+  ✓   2 [chromium] › apps/web/e2e/frontend.spec.ts:46:5 › premium demo needs explicit completion and returns three tools with a workflow (2.3s)
+  ✓   3 [chromium] › apps/web/e2e/frontend.spec.ts:60:5 › demo sign-in claims a browser box and persists a favorite in the collection (4.3s)
+  ✓   4 [chromium] › apps/web/e2e/frontend.spec.ts:97:5 › catalog search has useful empty and reset states (1.7s)
+  ✓   5 [chromium] › apps/web/e2e/frontend.spec.ts:112:5 › landing and discovery fit a narrow screen and expose keyboard skip navigation (1.9s)
+  ✓   6 [chromium] › apps/web/e2e/frontend.spec.ts:133:5 › reduced-motion preference disables decorative page motion (766ms)
+  ✓   7 [chromium] › apps/web/e2e/frontend.spec.ts:142:5 › a pending box request shows progress and prevents duplicate clicks (1.3s)
+  ✓   8 [chromium] › apps/web/e2e/frontend.spec.ts:185:5 › analytics can be disabled without affecting discovery (1.9s)
+  ✓   9 [chromium] › apps/web/e2e/frontend.spec.ts:245:5 › copy prompt writes the exact displayed text to the clipboard (2.1s)
+  ✓  10 [chromium] › apps/web/e2e/frontend.spec.ts:272:5 › browser Back and Forward restore the same result without creating another box (1.4s)
+  ✓  11 [chromium] › apps/web/e2e/frontend.spec.ts:317:5 › demo checkout back-to-edit and cancellation return never unlock a premium box (2.5s)
+  ✓  12 [chromium] › apps/web/e2e/frontend.spec.ts:377:5 › a free-box 503 retry reuses its key and returns the one box already created (1.4s)
+
+  12 passed (25.5s)

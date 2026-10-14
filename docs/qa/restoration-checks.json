@@ -1,6 +1,6 @@
 {
-  "checkedAt": "2026-10-14T08:07:55.168398+00:00",
-  "scope": "Static documentation/catalog check only. Separate component evidence now includes scoped actual Mongo replica-set test; this manifest is not a complete app verification.",
+  "checkedAt": "2026-10-14T08:24:47.174451+00:00",
+  "scope": "Final documentation/catalog static verification. Current local gate88, expanded real Mongo, HTTP13 and browser12/6; published e4c714e CI88/browser8/6 verified separately. No provider/phone/public-production success claim.",
   "sourcePlan": {
     "bytes": 6729,
     "sha256": "b2cd871409b4099d5f521c5e7b9875317fc139c966d033f15789581871738180",
@@ -26,28 +26,28 @@
       "admin"
     ],
     "realAiProvider": "Vercel AI Gateway",
-    "integrationTests": "partial: scoped actual Mongo 8.0.17 test passed; full HTTP/quality gate pending"
+    "integrationTests": "Local full gate88/88 at08:20, API66 including expanded Mongo1 and MCP13, Web17, Admin5; HTTP13; browser Web12/Admin6 at08:22; audit0"
   },
   "markdown": {
     "relativeLinks": "passed",
     "codeFences": "passed",
-    "prettier": "passed for all 15 reconstructed Markdown files and catalog; exact source-plan intentionally excluded"
+    "prettier": "Passed all reconstructed Markdown and catalog; exact original source-plan excluded"
   },
   "files": [
     {
       "path": "docs/README.md",
-      "bytes": 2581,
-      "sha256": "337dc6b86b028e8d57eb78066a943e145c979ce33d54ba321b93abdf37c133f1"
+      "bytes": 3183,
+      "sha256": "238ad6151cf1f27dee84ba7c57be363ecd36468d3cdf764379e02ee569e3d045"
     },
     {
       "path": "docs/acceptance.md",
-      "bytes": 14930,
-      "sha256": "e19aeee4ae8a6ec27dcb6d13d19dac2d00c56000b2a2a5690d879c0088a8615e"
+      "bytes": 18228,
+      "sha256": "b0caa56b5517730319eac4d73ff832113f0e4508598c707326a3bc6dfaace507"
     },
     {
       "path": "docs/admin.md",
-      "bytes": 7193,
-      "sha256": "cf2f38eaf6a0a018df577e5a45299e603ba8ef4d963c01b3577534429bed81f9"
+      "bytes": 7332,
+      "sha256": "35e5a9ce42ddd680849dc316d268f28a942cf7f49fa0c5af7e8b260ce17a8041"
     },
     {
       "path": "docs/adr-latest-stack.md",
@@ -56,13 +56,13 @@
     },
     {
       "path": "docs/api.md",
-      "bytes": 10325,
-      "sha256": "9ff192686668a86c183feb7d0c296bd273454b1436d97bbbb61ef75f222151ba"
+      "bytes": 10919,
+      "sha256": "d8cffa888074bfe48419e90c499fb348e73b80a2cf1e19d0b60ac7cfddaddfa8"
     },
     {
       "path": "docs/architecture.md",
-      "bytes": 9112,
-      "sha256": "c04ae6c0557308fba94d9432e2c64df5876915a4fd398341a17df5951399d986"
+      "bytes": 10419,
+      "sha256": "b2a98973484b2f2ab62938ce418896ecb4504bc9bc054b6d2c29517a1c89210b"
     },
     {
       "path": "docs/catalog-sources.md",
@@ -71,18 +71,23 @@
     },
     {
       "path": "docs/changelog.md",
-      "bytes": 2172,
-      "sha256": "90691161a18d957bcca02736b026a1b721420f7e1b8c1ac9c255ee4ad83d3f73"
+      "bytes": 2669,
+      "sha256": "13a243bdc7cb3a6877ddb7cacda671ed9215fcd02af8f466c5c1d0bd46cd7d5d"
     },
     {
       "path": "docs/data-model.md",
-      "bytes": 7750,
-      "sha256": "479fa9ea81256e4be100a187a97f69506b4506671146e080b7abd8f79fbfe8ec"
+      "bytes": 8029,
+      "sha256": "9080aa34bc52e2a6bab35971a3e688fe84c8415b72f6754dee6f76084ad68093"
     },
     {
       "path": "docs/prd.md",
       "bytes": 8560,
       "sha256": "00c2e25d2ca0ab0ca4387ce8225fd1340445af18fa12b96d4f55ea539ebe234d"
+    },
+    {
+      "path": "docs/qa/admin-browser-verification.log",
+      "bytes": 783,
+      "sha256": "38d99174899c8c22bfbe423de48345506af358df785201ce8edcf01881e5273d"
     },
     {
       "path": "docs/qa/admin-proxy-verification.log",
@@ -95,9 +100,19 @@
       "sha256": "0a7215b7931e40b54d64b68d09bbf6d076cc937573dea71ef20a81cea364269d"
     },
     {
+      "path": "docs/qa/api-component-verification.log",
+      "bytes": 5944,
+      "sha256": "f5db364a3f71294a3f3cedd0f268c9cd941b611481f00cf37b5e85a85acf678e"
+    },
+    {
       "path": "docs/qa/component-verification.json",
-      "bytes": 3379,
-      "sha256": "c344347971824728e25c344e422aa01d342b4aa6467f00b238a91d15792ce4b5"
+      "bytes": 6955,
+      "sha256": "45a7411ca18c6eb059a5e1699aed261bdcc07e3c642957cd4b4a51c594056c7f"
+    },
+    {
+      "path": "docs/qa/final-check.log",
+      "bytes": 11596,
+      "sha256": "68756af11ace3c99b0cbc165ff434101f257e1f76189d933f469a256df95e373"
     },
     {
       "path": "docs/qa/historical-http-smoke.json",
@@ -107,17 +122,27 @@
     {
       "path": "docs/qa/http-smoke-restored.json",
       "bytes": 405,
-      "sha256": "0b8f5ab0b299616348f29ffbffa3f11677710961326c46f6906c3a903a5e9ade"
+      "sha256": "55025a1df1b67886f0703b82e27bcc96ad5740b8bf78d4f5b61b1828c09ebc37"
     },
     {
       "path": "docs/qa/mongo-replica-verification.log",
-      "bytes": 216,
-      "sha256": "4171879c0e3c45d78be122cb920ca16186ce758be8f154c9a73ed30a491a8011"
+      "bytes": 217,
+      "sha256": "e32753e2c51a891660226b884b3e86dc13240420193e0ba2a9f349cf17c25fdd"
+    },
+    {
+      "path": "docs/qa/npm-audit-final.json",
+      "bytes": 365,
+      "sha256": "14bdf83e0bb04012a765b09471e27bfc4007b70132168e419556ae59583a0f82"
+    },
+    {
+      "path": "docs/qa/web-browser-verification.log",
+      "bytes": 1790,
+      "sha256": "f2622e564574ebba526da97c0b9b2d1b9679a854853c8140c59a6cf193b1d9be"
     },
     {
       "path": "docs/requirements.md",
-      "bytes": 2499,
-      "sha256": "ce80a989a1928c540dceb89925965431d4087c87ca9072b7e96ad10c16c71bd2"
+      "bytes": 2985,
+      "sha256": "ea397e874acb76705aa1bf448382da759ebea142df74c3bbcdc51bc24d09cae6"
     },
     {
       "path": "docs/restoration.md",
@@ -126,18 +151,18 @@
     },
     {
       "path": "docs/roadmap.md",
-      "bytes": 3367,
-      "sha256": "0206330167dddd6248c779546e0e644be444422cfb5d7206af980df21dd5e74a"
+      "bytes": 3421,
+      "sha256": "72073bb61912c2d4fc1481a6a7ac2d5f5e754f7420d080150010051cfe3cbb72"
     },
     {
       "path": "docs/runbook.md",
-      "bytes": 14324,
-      "sha256": "cb76cb52c3704deb8d570507b11ec9b39b64b0fee9f1fec20512d34562369603"
+      "bytes": 16589,
+      "sha256": "208a6265b4e2847e9e180bd84bab520a193ecefe0e839e67580c4453b09ef321"
     },
     {
       "path": "docs/security.md",
-      "bytes": 6639,
-      "sha256": "feaf46a877bb367ec0d9f166941ae8345e5cd3a011d7c6856be5a9302c1cf9b8"
+      "bytes": 7379,
+      "sha256": "c602e566c577a6e5d089d4377e759d7b4193f85c9c47ae1962781524b3d8ff66"
     },
     {
       "path": "docs/source-plan.md",
@@ -146,8 +171,8 @@
     },
     {
       "path": "docs/spec-kit.md",
-      "bytes": 6714,
-      "sha256": "1a8595fb99302c97bccdb147743c69a91e5ace51411c4b7928140cff56be7060"
+      "bytes": 7060,
+      "sha256": "af8514bc56fb92fa9e9114f0f738c4ed680276670680c191e7011baddb5c3306"
     },
     {
       "path": "apps/api/src/catalog.ts",
@@ -156,5 +181,22 @@
     }
   ],
   "componentEvidence": "docs/qa/component-verification.json; new Web/Admin/API component and actual Mongo results with explicit limits",
-  "analyticsContract": "Required durable order/box/user counts separated from optional anonymous browsing events; pending final integrated rerun"
+  "analyticsContract": "Required durable order/box/user counts separated from optional anonymous browsing events; covered by current local tests",
+  "publishedStage": {
+    "asOf": "2026-10-14T08:22:00Z",
+    "commit": "e4c714e8aa58e6df6ec74ab30360074a4c142491",
+    "files": 223,
+    "ciUrl": "https://github.com/houjuan0623/MysteryBox/actions/runs/38534184679",
+    "ciStatusAtThatTime": "success",
+    "latestSupplementalTestsIncluded": false,
+    "evidence": "Publisher verification relayed by core task",
+    "ciEvidence": {
+      "tests": 88,
+      "skipped": 0,
+      "http": 13,
+      "webBrowser": 8,
+      "adminBrowser": 6,
+      "auditVulnerabilities": 0
+    }
+  }
 }

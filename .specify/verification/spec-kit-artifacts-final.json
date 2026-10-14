@@ -1,0 +1,401 @@
+[
+  {
+    "description": "Perform a non-destructive cross-artifact consistency and quality analysis across spec.md, plan.md, and tasks.md after task generation.",
+    "id": "command:speckit.analyze",
+    "kind": "command",
+    "name": "speckit.analyze",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.analyze",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Generate a custom checklist for the current feature based on user requirements.",
+    "id": "command:speckit.checklist",
+    "kind": "command",
+    "name": "speckit.checklist",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.checklist",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Identify underspecified areas in the current feature spec by asking up to 5 highly targeted clarification questions and encoding answers back into the spec.",
+    "id": "command:speckit.clarify",
+    "kind": "command",
+    "name": "speckit.clarify",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.clarify",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Create or update the project constitution from interactive or provided principle inputs.",
+    "id": "command:speckit.constitution",
+    "kind": "command",
+    "name": "speckit.constitution",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.constitution",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Assess the current codebase against the feature's spec, plan, and tasks, then append any remaining unbuilt work as new tasks to tasks.md so implement can complete it.",
+    "id": "command:speckit.converge",
+    "kind": "command",
+    "name": "speckit.converge",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.converge",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Execute the implementation plan by processing and executing all tasks defined in tasks.md",
+    "id": "command:speckit.implement",
+    "kind": "command",
+    "name": "speckit.implement",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.implement",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Execute the implementation planning workflow using the plan template to generate design artifacts.",
+    "id": "command:speckit.plan",
+    "kind": "command",
+    "name": "speckit.plan",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.plan",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Create or update the feature specification from a natural language feature description.",
+    "id": "command:speckit.specify",
+    "kind": "command",
+    "name": "speckit.specify",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.specify",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Generate an actionable, dependency-ordered tasks.md for the feature based on available design artifacts.",
+    "id": "command:speckit.tasks",
+    "kind": "command",
+    "name": "speckit.tasks",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.tasks",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Deprecated: Convert existing tasks into actionable, dependency-ordered GitHub issues for the feature based on available design artifacts.",
+    "id": "command:speckit.taskstoissues",
+    "kind": "command",
+    "name": "speckit.taskstoissues",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "command:speckit.taskstoissues",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "id": "template:checklist-template",
+    "kind": "template",
+    "name": "checklist-template",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "template:checklist-template",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "id": "template:constitution-template",
+    "kind": "template",
+    "name": "constitution-template",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "template:constitution-template",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "id": "template:plan-template",
+    "kind": "template",
+    "name": "plan-template",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "template:plan-template",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "id": "template:spec-template",
+    "kind": "template",
+    "name": "spec-template",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "template:spec-template",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Task list template for feature implementation",
+    "id": "template:tasks-template",
+    "kind": "template",
+    "name": "tasks-template",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "template:tasks-template",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "Consolidated prerequisite checking script",
+    "id": "script:check-prerequisites",
+    "kind": "script",
+    "name": "check-prerequisites",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "script:check-prerequisites",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "id": "script:resolve-template",
+    "kind": "script",
+    "name": "resolve-template",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "script:resolve-template",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "id": "script:setup-plan",
+    "kind": "script",
+    "name": "setup-plan",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "script:setup-plan",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  },
+  {
+    "description": "",
+    "id": "script:setup-tasks",
+    "kind": "script",
+    "name": "setup-tasks",
+    "stack": [
+      {
+        "active": true,
+        "hidden": false,
+        "id": "script:setup-tasks",
+        "layer": null,
+        "lookupId": null,
+        "manifestPath": null,
+        "presetId": null,
+        "presetName": null,
+        "sourceId": null,
+        "sourcePath": null,
+        "strategy": "replace"
+      }
+    ]
+  }
+]

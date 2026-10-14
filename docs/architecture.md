@@ -2,7 +2,7 @@
 
 > 恢复版（2026-10-14）：依据旧任务保留的正文与修订重建。除原始方案外不声明字节级一致；涉及实现的描述是应恢复的设计，需与恢复代码及新测试对齐。旧主机结果不证明本目录已通过验收。
 
-当前技术栈为NestJS + MongoDB + 独立Next.js，最新要求覆盖原方案，见[ADR-008](adr-latest-stack.md)和[数据模型](data-model.md)。MongoDB 已有真副本集局部测试证据，完整恢复/生产验收仍待完成，见 acceptance.md。
+当前技术栈为NestJS + MongoDB + 独立Next.js，最新要求覆盖原方案，见[ADR-008](adr-latest-stack.md)和[数据模型](data-model.md)。MongoDB 真副本集、本地完整质量门禁与浏览器已有当前通过证据；e4c714e 阶段 CI 已通过；最新增量 CI、真实服务与生产另行验收，见 acceptance.md。
 
 ## 1. 系统边界与目录
 

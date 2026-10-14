@@ -28,17 +28,21 @@ API_INTERNAL_URL 是 Web/Admin 各自固定上游。APP_URL、ADMIN_APP_URL 使�
 
 日期窗默认近 7 天，UTC 起含止不含，最多 31 天；非法/倒置日期拒绝。无数据返回零/空列表。用户与访客指标不混淆，demo/sandbox/live 明确区分；事件详情不输出原始目标、IP、验证码或秘密。
 
-## MCP 能力契约（实现中）
+## MCP 能力契约（已实现并完成局部验证）
 
-以下是逻辑能力和权限，不提前宣称最终 wire 工具名。最终路由、协议方法、工具名和 schema 必须由 Nest 实现与契约测试确认，再同步文档。
+实际入口为同一 Nest 进程的 `/mcp`，官方 `@modelcontextprotocol/sdk` 1.32.1 Streamable HTTP；独立 bearer 鉴权，不接受网站 cookie/admin 会话。MCP_ENABLED 未设置或为 0 时不挂载路由。
 
-| 能力     | 最小权限              | 输入约束                              | 输出/副作用                                  |
-| -------- | --------------------- | ------------------------------------- | -------------------------------------------- |
-| 统计读取 | statistics read scope | 同 Admin 的有效时间窗；不允许任意查询 | 仅明确允许的汇总字段，不自动开放私人用户明细 |
-| 草稿创建 | draft create scope    | 有界类型/正文、稳定幂等键、服务端主体 | 持久化草稿及审计；没有发送或执行             |
-| 草稿列出 | draft list scope      | 有界分页与服务端主体                  | 仅该主体可见草稿；不得跨主体枚举             |
+| 工具              | scope          | 严格输入                                                                                  | 输出/副作用                                             |
+| ----------------- | -------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| analytics_summary | analytics:read | from/to ISO 日期，可省略，UTC 最多31天                                                    | 汇总，不暴露原始用户/邮箱/visitor/activity              |
+| draft_create      | drafts:write   | type=tool/box/promotion；title 1–120、content 1–8000、tags 最多8×32、idempotencyKey 8–128 | 状态固定 draft，主体隔离；不发送/执行；每主体最多1000条 |
+| draft_list        | drafts:read    | 可选 type、UUID cursor、limit 1–50，默认20                                                | 仅当前主体草稿，有界分页                                |
 
-默认未启用时不给出业务工具调用入口。凭据从已授权配置读取；不得自动发放新凭据或扩大 scope。未知工具/方法/额外字段拒绝，错误和审计脱敏。重复草稿写入同键同内容复用，同键异内容冲突。
+未知字段/方法/工具拒绝；tools/list 按 scope 过滤，直接调用再次校验。默认本机 socket+Host，拒绝 forwarded；带 Origin 的请求须精确允许。独立配置 token SHA-256 摘要和主体，恒定时间比较，不自动发行或配置凭据。正文上限16 KiB。
+
+草稿、哈希幂等 receipt 与成功审计在同一个 Store 原子操作内写入；同主体同键同规范输入复用，异输入冲突；审计失败不得成功提交。审计无 bearer、正文、邮箱、IP 或原始错误。使用 `mcp_drafts`、`mcp_idempotency`、`mcp_audit` 三类文档。
+
+实现与完整配置见 [模块说明](../../../apps/api/src/mcp/README.md)。当前13项SDK/HTTP/事务语义测试使用MemoryStore（含真正Nest bootstrap）；08:18:43另通过官方SDK InMemoryTransport+真Mongo生命周期，覆盖12并发单draft/receipt、冲突、重启重放/列出与审计持久化。无远程客户端/生产凭据注册，audit 无自动保留期、限流是进程内固定桶，广泛远程使用前需独立运维审查。
 
 ## 契约测试矩阵
 

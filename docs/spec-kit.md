@@ -1,6 +1,6 @@
 # 官方 Spec Kit 接入与推进方式
 
-日期：2026-10-14。MysteryBox 已实际运行官方 github/spec-kit 的 CLI 初始化与脚本，固定版本 **1.2.0**。本次完成工具接入和规格化，项目整体仍在实现/集成中。
+日期：2026-10-14。MysteryBox 已实际运行官方 github/spec-kit 的 CLI 初始化与脚本，固定版本 **1.2.0**。工具接入和规格化已完成；最新本地根门禁及既有浏览器用例通过，剩余验收覆盖与交付门槛有明确记录。
 
 ## 1. 官方来源与实际执行
 
@@ -37,7 +37,7 @@ Generic integration 的命令在 [.specify/commands/](../.specify/commands/)。�
 | checklist          | [requirements.md](../specs/001-three-app-foundation/checklists/requirements.md)，只评审需求质量                                                      |
 | tasks              | [tasks.md](../specs/001-three-app-foundation/tasks.md)，完成与未完成分开                                                                             |
 | analyze / converge | [traceability.md](../specs/001-three-app-foundation/traceability.md)、[convergence.md](../specs/001-three-app-foundation/convergence.md)，当前未收敛 |
-| implement          | 业务实现任务仍开放，未声称本次工具接入自动实现应用                                                                                                   |
+| implement          | 核心实现已有验证，未覆盖验收仍开放；不声称工具接入自动实现应用                                                                                       |
 
 官方 `resolve-template.sh`、`create-new-feature.sh`、`setup-plan.sh`、`setup-tasks.sh` 已实际运行。后续从仓库根校验：
 
@@ -60,6 +60,6 @@ Spec Kit 自身提供的开发 MCP 和 bundled workflow 与 MysteryBox 业务 MC
 
 ## 4. 当前结果和诚实边界
 
-本次 Spec Kit 初始化本身不产生应用测试结论。后续已取得新 API/MCP 组件、真实 Mongo 副本集局部集成和浏览器复测证据，最终整仓门禁仍在收尾；最新应用结果以[验收记录](acceptance.md)为准。规格阶段差距另见 [当前差距](../specs/001-three-app-foundation/convergence.md)，其中早期未完成标记须与后续实测逐项核对，不能自动视为通过。
+本次 Spec Kit 初始化本身不产生应用测试结论。后续已取得新 API/MCP 组件、真实 Mongo 副本集局部集成和浏览器复测证据，最终本地整仓门禁也已通过，已发布阶段 CI 通过；后续测试增量、真实服务和生产仍独立待验收；最新应用结果以[验收记录](acceptance.md)为准。规格阶段差距另见 [当前差距](../specs/001-three-app-foundation/convergence.md)，其中早期未完成标记须与后续实测逐项核对，不能自动视为通过。
 
 官方前置脚本通过只证明文档/模板结构可用。规格质量清单的勾选只证明需求经过审查，不代表功能验收、真实供应商通过或生产部署成功。早期/最终 Library 快照和 GitHub 发布由相应已授权交付流程另行核对；本接入不自动执行发布。

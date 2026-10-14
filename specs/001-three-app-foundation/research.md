@@ -27,18 +27,18 @@
 
 - 决策：AI_MODE 仅 demo/vercel；真实模式需模型、密钥与授权门槛，默认不发起网络调用。
 - 原因：最新用户要求覆盖历史 OpenAI 直连支持。
-- 待办：初次规格检查仍看到 config.ts 中残留 openai 类型/字段/不可达分支，必须清理并重跑测试；这是实现差距，不是产品决策不明确。
+- 待办：初次规格检查的config残留已清理，活跃AI_MODE和工厂仅demo/vercel，最终根门禁通过。ai.ts的历史OpenAiProvider及兼容类型字段/隔离单元测试仍保留，但不从当前config加载环境、不由工厂选择；不宣称历史源码已删除。
 - 上线门槛：真实模型及凭据选择尚未关闭；demo 可继续验收。
 
 ## R5：MCP 是 API 的受限入口
 
 - 决策：在 Nest 内实现，默认关闭；仅统计读取与草稿创建/列出；scope、所有权、审计与幂等不可省略。
 - 原因：不增加第四个应用，也不把草稿升级为外部发送或自动化。
-- 待办：最终工具名称、传输挂载和测试日志以实现后的契约/验收更新为准；本文不把不存在的接口说成可用。
+- 待办：当前实际接口为Nest `/mcp`、官方SDK Streamable HTTP，工具analytics_summary/draft_create/draft_list；13项局部测试通过。08:18:43新增真Mongo草稿/receipt/audit并发及重启生命周期通过，使用官方SDK InMemoryTransport；HTTP/Nest边界单独覆盖。
 - 区分：Spec Kit CLI 自带的开发辅助 MCP 与 MysteryBox 业务 MCP 无关，本次未启动 Spec Kit MCP 服务。
 
 ## R6：验证结果分层
 
-- 决策：保留已有 Web/Admin/provider 局部新结果，但数据库、认证、角色、MCP 与浏览器集成逐项重新验收。
+- 决策：根check与最终浏览器日志已更新：API66含真Mongo1及MCP13、Web17、Admin5、HTTP13，Web浏览器12与Admin6通过。持续区分真数据库、合成故障、MemoryStore、fixture UI和生产验证。
 - 原因：编译、UI 单元与代理 HTTP 均不能证明真实授权和数据库事务正确。
 - 来源：[组件证据](../../docs/qa/component-verification.json)、[provider 恢复记录](../../apps/api/src/providers/RECOVERY.md)、[验收记录](../../docs/acceptance.md)。

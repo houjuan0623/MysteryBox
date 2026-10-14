@@ -1,0 +1,90 @@
+{
+  "recordedAtUtc": "2026-10-14T08:24:27.061868+00:00",
+  "scope": "Read-only review of current final local checks; not production, provider, remote CI or complete requirements coverage.",
+  "rootCheck": {
+    "exitCode": 0,
+    "environment": {
+      "RUN_MONGO_TESTS": "1",
+      "NEXT_DIST_DIR": ".next-verify"
+    },
+    "apiTests": {
+      "passed": 66,
+      "failed": 0,
+      "skipped": 0,
+      "includesMcp": 13,
+      "includesRealMongo": 1
+    },
+    "webUnit": 17,
+    "adminUnit": 5,
+    "httpSmoke": 13,
+    "lint": "passed",
+    "format": "passed",
+    "typecheck": "passed",
+    "builds": [
+      "web",
+      "admin",
+      "api"
+    ],
+    "completedAtUtc": "2026-10-14T08:20:24Z",
+    "includesExpandedMongoLifecycle": true,
+    "workspaceTestsTotalPassed": 88
+  },
+  "browser": {
+    "web": {
+      "passed": 12,
+      "exitCode": 0,
+      "scope": "Real Chromium local all-demo app. Added exact copy payload at stubbed system clipboard boundary, real Back/Forward, demo cancellation/back-to-edit, and simulated lost-response retry after real local server commit.",
+      "completedAtUtc": "2026-10-14T08:22:25Z"
+    },
+    "admin": {
+      "passed": 6,
+      "exitCode": 0,
+      "scope": "5 fixture-backed UI tests + 1 real Next proxy HTTP test",
+      "completedAtUtc": "2026-10-14T08:22:30Z"
+    }
+  },
+  "auditVulnerabilities": 0,
+  "logsSha256": {
+    "final-check.log": "68756af11ace3c99b0cbc165ff434101f257e1f76189d933f469a256df95e373",
+    "web-browser-final.log": "f2622e564574ebba526da97c0b9b2d1b9679a854853c8140c59a6cf193b1d9be",
+    "admin-browser-final.log": "38d99174899c8c22bfbe423de48345506af358df785201ce8edcf01881e5273d",
+    "npm-audit-final.json": "14bdf83e0bb04012a765b09471e27bfc4007b70132168e419556ae59583a0f82",
+    "mongo-lifecycle-final.log": "e32753e2c51a891660226b884b3e86dc13240420193e0ba2a9f349cf17c25fdd"
+  },
+  "openCoverage": [
+    "OS clipboard integration beyond stubbed navigator.clipboard.writeText boundary",
+    "Tab-close/OTP interruption and complete negative-input/payment-email ownership matrices",
+    "Cookie attribute matrix, admin:role CLI, and full fixture-free Admin browser/backend exercise",
+    "Independent clean production start/deploy and disaster-recovery exercise",
+    "Final published delta exact commit/CI and final Library handoff",
+    "Real-provider credentials, model approval, charging/sending authorization and production deployment"
+  ],
+  "expandedMongoLifecycle": {
+    "reportedPassedAtUtc": "2026-10-14T08:18:43Z",
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "log": "mongo-lifecycle-final.log",
+    "source": "apps/api/test/mongo.test.ts",
+    "coverage": [
+      "MongoDB8.0.17 single-node replica set",
+      "Two-connection concurrent OTP exactly one use/session",
+      "Guest/member/admin/revoked HTTP matrix for all three admin routes",
+      "Real-Mongo analytics dedup, visitor hashing, pruning and restart persistence",
+      "Official MCP SDK initialize/list with InMemoryTransport and real MongoStore",
+      "12 concurrent draft writes across two Mongo connections produce one draft/receipt",
+      "Changed-payload conflict, success/replay/conflict audit records without body/key",
+      "Full local mongod restart then SDK reinitialize, idempotent replay/list and audit persistence"
+    ],
+    "boundary": "SDK transport for this database lifecycle test is InMemoryTransport; separate 13 MCP tests cover HTTP and Nest mounting. No real provider calls."
+  },
+  "publication": {
+    "checkpointCi": {
+      "commitShortSha": "e4c714e",
+      "runId": "38534184679",
+      "reportedConclusion": "success",
+      "source": "Verified publication task report"
+    },
+    "finalDeltaCi": "pending publisher; checkpoint CI does not prove later edits"
+  }
+}

@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-14
 
-**Status**: In progress；规格已编写，整体实现/集成尚未收敛
+**Status**: In progress；本地根门禁及既有浏览器用例通过；已冻结范围及未验证矩阵见tasks/convergence，生产与最终增量CI不在本地通过结论内
 
 **Input**: 根据用户最新要求，将恢复工程落实为独立用户前台、管理端与业务 API，保留原始产品范围，完成数据库、认证、幂等、供应商与受控 MCP 的可验证实现。本文件表达目标，不将现有代码推定为已完成。
 
@@ -12,7 +12,7 @@
 
 ### User Story 1 - 获得可理解且可操作的工具推荐 (Priority: P1)
 
-访客选择 creator、developer、student 或 business，说明目标，领取 Free 推荐；结果提供具体理由、场景、Prompt、步骤和可信官方外链。
+访客选择 creator、developer、student 或 business，可选补充目标，领取 Free 推荐；结果提供具体理由、场景、Prompt、步骤和可信官方外链。
 
 **Why this priority**: 无需付款即可验证产品的核心价值。
 
@@ -22,7 +22,7 @@
 
 1. **Given** 有效兴趣与目标，**When** 首次提交 Free，**Then** 显示 1 个相关工具和完整操作指导，明确 demo 状态。
 2. **Given** 同一业务键和输入，**When** 并发或网络重试，**Then** 不创建第二个资源；同键不同输入返回冲突。
-3. **Given** 空目标、超过 500 字符或非法兴趣，**When** 提交，**Then** 给出清楚错误且保留可修改输入。
+3. **Given** 未填写目标但兴趣有效，**When** 提交，**Then** 使用该兴趣的默认简报正常生成；目标超过500字符或兴趣非法时清楚拒绝并保留输入。
 4. **Given** 键盘或 reduced-motion 使用者，**When** 浏览、开箱、复制与返回，**Then** 焦点可见、状态可理解，不强制持续运动。
 
 ### User Story 2 - 安全购买 Premium 指导 (Priority: P1)
