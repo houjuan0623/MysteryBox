@@ -1,0 +1,54 @@
+{
+  "historicalOnly": true,
+  "reconstructedFromConversation": true,
+  "originalReportCheckedAt": "2026-10-14T03:55:47.567Z",
+  "reconstructedAt": "2026-10-14",
+  "mode": "all providers demo",
+  "currentRestorationTestResult": false,
+  "checks": [
+    {
+      "name": "health and explicit demo config",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "catalog and invalid query",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "CSRF missing and hostile Origin rejected",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "unknown payment fields and missing idempotency rejected",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "four interests Free HTTP, token access, refresh and concurrent replay",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "Premium demo transaction, concurrent capture and no live capture path",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "unsigned webhook rejected",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "demo email requires explicit consent and returns demo status",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "OTP session cookie, guest claim and account history",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "favorites are idempotent and unknown tool rejected",
+      "historicalStatus": "passed"
+    },
+    {
+      "name": "logout invalidates server session and protects collection",
+      "historicalStatus": "passed"
+    }
+  ]
+}

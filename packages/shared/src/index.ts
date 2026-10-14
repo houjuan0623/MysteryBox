@@ -12,5 +12,5 @@ export interface Box { id: string; title: string; summary: string; interest: Int
 export interface PublicConfig { demo: boolean; aiMode: 'demo'|'openai'|'vercel'; paymentMode: 'demo'|'paypal'; emailMode: 'demo'|'resend'; premiumPriceCents: number; currency: 'USD'; paypalClientId?: string; paymentEnvironment?: 'demo'|'sandbox'|'live'; }
 export interface BoxResponse { box: Box; accessToken: string; emailStatus?: 'skipped'|'demo'|'sent'|'failed'; }
 export interface CheckoutResponse { orderId: string; paypalOrderId: string; approvalUrl?: string; demo: boolean; accessToken: string; amountCents: number; currency: 'USD'; }
-export interface User { id: string; email: string; }
+export interface User { id: string; email: string; role?: "admin"|"member"; createdAt?: string; lastLoginAt?: string; }
 export interface ApiError { error: { code: string; message: string; requestId?: string; }; }

@@ -1,0 +1,56 @@
+{
+  "recordedAt": "2026-10-14T07:23:40.242777+00:00",
+  "scope": "New restoration component checks only; not complete API/Mongo/provider/browser verification.",
+  "web": {
+    "reportedAtApprox": "2026-10-14T07:13:00Z",
+    "command": "npm run typecheck -w @mysterybox/web && npm run test -w @mysterybox/web && npm run build -w @mysterybox/web",
+    "exitCode": 0,
+    "tests": {
+      "passed": 12,
+      "failed": 0,
+      "skipped": 0
+    },
+    "typecheck": "passed",
+    "build": "Next.js 16.4.0 production passed; static generation 9/9",
+    "evidenceType": "Implementation-task report of retained tool output; no original stdout file saved",
+    "browserCases": {
+      "authored": 8,
+      "execution": "not run on replacement host"
+    }
+  },
+  "admin": {
+    "reportedAt": "2026-10-14T07:20:00Z",
+    "commands": [
+      "npm test -w @mysterybox/admin",
+      "npm run typecheck -w @mysterybox/admin",
+      "npm run build -w @mysterybox/admin",
+      "npm run test:ui -w @mysterybox/admin -- --grep 'real proxy'"
+    ],
+    "unit": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "proxyHttp": {
+      "passed": 1,
+      "failed": 0,
+      "scope": "Real Next proxy route allowlist and 16KB body rejection; no browser launch"
+    },
+    "typecheck": "passed with copied log",
+    "build": "Implementation-task report: independent Next16.4 production build passed; original stdout not saved",
+    "browserCases": {
+      "authored": 5,
+      "execution": "blocked at Chromium startup by environment socket restriction, before assertions"
+    },
+    "logsSha256": {
+      "admin-unit-verification.log": "0a7215b7931e40b54d64b68d09bbf6d076cc937573dea71ef20a81cea364269d",
+      "admin-proxy-verification.log": "c7f905a83e8c79818bd582cd7ba96b4d38f6c1849bf04421fc0fe0ae57ac9a54"
+    }
+  },
+  "notCovered": [
+    "Full Nest authentication/role/analytics integration",
+    "MongoDB replica-set integration",
+    "Real AI/payment/email providers",
+    "Public production deployment"
+  ]
+}
