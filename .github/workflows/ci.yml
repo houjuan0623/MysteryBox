@@ -1,0 +1,25 @@
+name: Verify MysteryBox
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    env:
+      NEXT_TELEMETRY_DISABLED: '1'
+      AI_MODE: demo
+      PAYMENT_MODE: demo
+      EMAIL_MODE: demo
+      MCP_ENABLED: '0'
+      RUN_MONGO_TESTS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - run: npm run test:ui -w @mysterybox/admin

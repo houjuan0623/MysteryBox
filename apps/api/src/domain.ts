@@ -49,6 +49,8 @@ export interface OrderRecord {
   providerOrderId: string;
   approvalUrl?: string;
   paymentStatus: "pending" | "completed";
+  paymentEnvironment: "demo"|"sandbox"|"live";
+  paidAt?: string;
   generationStatus: "queued" | "ready" | "failed";
   captureId?: string;
   boxId: string;
@@ -376,6 +378,7 @@ export class MysteryBoxService {
         currency: "USD",
         providerOrderId: "",
         paymentStatus: "pending",
+        paymentEnvironment: this.config.paymentMode === "demo" ? "demo" : this.config.paypalMode || "sandbox",
         generationStatus: "queued",
         boxId: randomUUID(),
         createKey: randomUUID(),
@@ -443,6 +446,7 @@ export class MysteryBoxService {
         "Payment could not be matched to this order.",
       );
     order.paymentStatus = "completed";
+    order.paidAt ||= now();
     order.captureId = captureId;
     await tx.put("orders", order.id, order);
     if (!(await tx.get("boxes", order.boxId)))
@@ -651,7 +655,7 @@ export class MysteryBoxService {
         (await tx.get<{ toolIds: string[] }>("favorites", user.id))?.toolIds ||
           [],
       );
-      saved ? favorites.add(toolId) : favorites.delete(toolId);
+      if (saved) favorites.add(toolId); else favorites.delete(toolId);
       const result = { toolIds: [...favorites] };
       await tx.put("favorites", user.id, result);
       return result;

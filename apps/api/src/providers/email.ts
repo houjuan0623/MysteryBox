@@ -15,6 +15,8 @@ function validateDestination(email: string, idempotencyKey: string): void {
   stableKey(idempotencyKey, 256);
 }
 function plain(value: string): string {
+  // 删除邮件正文中不可显示的控制字符，防止上游内容污染输出。
+  // eslint-disable-next-line no-control-regex
   return value.replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F\u007F]/g, "");
 }
 export function escapeHtml(value: string): string {

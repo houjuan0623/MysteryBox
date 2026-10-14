@@ -2,7 +2,7 @@
 
 > 恢复版（2026-10-14）：依据旧任务保留的正文与修订重建。除原始方案外不声明字节级一致；涉及实现的描述是应恢复的设计，需与恢复代码及新测试对齐。旧主机结果不证明本目录已通过验收。
 
-当前技术栈为NestJS + MongoDB + 独立Next.js，最新要求覆盖原方案，见[ADR-008](adr-latest-stack.md)和[数据模型](data-model.md)。MongoDB真实集成尚未验收。
+当前技术栈为NestJS + MongoDB + 独立Next.js，最新要求覆盖原方案，见[ADR-008](adr-latest-stack.md)和[数据模型](data-model.md)。MongoDB 已有真副本集局部测试证据，完整恢复/生产验收仍待完成，见 acceptance.md。
 
 ## 1. 系统边界与目录
 
@@ -77,7 +77,7 @@ Free 和订单创建要求 Idempotency-Key。同 key 同输入返回原资源；
 
 外部供应商动作无法被数据库回滚。含扣款、AI或发信的业务回调不得由驱动自动重跑；显式处理竞争、事务失败和commit结果不确定，保留稳定provider key并查询原订单。必须以新真实Mongo集成测试证明跨连接竞争与失败恢复。
 
-当前设计不是严格端到端exactly-once；高并发或长网络临界区需要任务lease/outbox和短事务演进。已恢复实现使用app_records与transaction_guards；guard竞争只在领域回调开始前重试，回调不重跑，UnknownTransactionCommitResult最多重试同一commit六次。初始化命令db:init，详见数据模型；实际集成仍待新测试。
+当前设计不是严格端到端exactly-once；高并发或长网络临界区需要任务lease/outbox和短事务演进。已恢复实现使用app_records与transaction_guards；guard竞争只在领域回调开始前重试，回调不重跑，UnknownTransactionCommitResult最多重试同一commit六次。初始化命令db:init，详见数据模型；已有局部真副本集结果；未知 commit 等故障场景仍需扩展测试。
 
 ## 3. 身份与访问
 

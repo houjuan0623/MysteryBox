@@ -100,6 +100,7 @@ health.storage应为mongo。db:init连接副本集、检查事务拓扑并建立
 npm run lint
 npm run format:check
 npm run typecheck
+npm run test:mongo
 npm test
 npm run build -w @mysterybox/api
 npm run build -w @mysterybox/web
@@ -110,7 +111,7 @@ npm run test:e2e
 node scripts/http-smoke.mjs
 ```
 
-必须运行ESLint、Prettier检查、TypeScript、单元、三个应用构建和HTTP测试；EditorConfig控制编辑格式。根check的实际覆盖以package.json为准，缺失某项不能视为该项通过。真实供应商和浏览器E2E仍单独验收。Mongo真库用TEST_MONGODB_URI或明确的隔离replica-set测试fixture；跳过真库必须在报告中说明。测试会写demo订单/测试记录，禁止生产库。
+必须运行ESLint、Prettier检查、TypeScript、单元、三个应用构建和HTTP测试；EditorConfig控制编辑格式。根check的实际覆盖以package.json为准，缺失某项不能视为该项通过。真实供应商和浏览器E2E仍单独验收。Mongo 真库用 TEST_MONGODB_URI 或 npm run test:mongo 显式启动 MongoDB 8.0.17 单节点 replica-set fixture；默认 npm test 在未设置 RUN_MONGO_TESTS=1/TEST_MONGODB_URI 时跳过 Mongo 集成，必须在报告中注明。fixture 仍是真正的 mongod，不是 MemoryStore。外部 URI 测试使用随机名称的 mysterybox_test_* 数据库，当前不自动删除该外部数据库；需按授权与保留政策清理，绝不能指向生产。测试会写demo订单/测试记录，禁止生产库。
 
 Playwright 的 Web 配置使用 3000 与 Chromium，可启动/复用 dev 服务器；Admin 有独立 test:ui 配置。当前恢复版有 8 个 Web 浏览器用例尚未执行，5 个 Admin 浏览器用例启动被环境 socket 限制阻塞；另 1 个 Admin 实际代理 HTTP 请求用例已通过。HTTP 请求测试不启动浏览器，不能据此标记 UI、登录或可访问性通过。最新局部证据见 acceptance.md。
 
@@ -150,7 +151,7 @@ curl --fail -X POST http://localhost:4000/api/checkout/orders \
 - 恰好三个应用：apps/web、apps/admin、apps/api，分别构建/运行/部署；MongoDB为外部持久化服务，不是第四个前端应用。
 - Web、Admin和API分别使用各自workspace的start命令，发布可以独立进行。
 - API注入Mongo/供应商/会话秘密并执行db:init/seed；Web/Admin只注入各自API上游、受信任入口和代理签名配置。数据库/供应商key不能放到前端部署。
-- 管理端配置ADMIN_APP_URL精确origin和服务器管理员角色检查；赋权/撤权流程须核心确认，未完成不能公开部署。详见admin.md。
+- 管理端配置 ADMIN_APP_URL 精确 origin，服务端每次读取当前管理员角色。运维使用 npm run admin:role -- grant|revoke verified-email，仅对 Mongo 中已完成验证码登录的账户生效，不创建默认管理员；执行前核对授权和环境。详见 admin.md。
 - TLS入口覆盖可信IP，禁止旁路，内部API/数据库私网。
 - 验证Origin、cookie、签名身份、PayPal签名头和不改变正文。
 - 告警覆盖paid-but-not-ready、队列重试、邮件失败、登录失败、成本。
@@ -174,7 +175,7 @@ npm run start -w @mysterybox/api
 | 现象                    | 检查                                                                           |
 | ----------------------- | ------------------------------------------------------------------------------ |
 | 启动失败                | env、origin格式、数据库、迁移、seed                                            |
-| ORIGIN_REJECTED         | Origin与APP_URL完全一致、代理透传                                              |
+| ORIGIN_REJECTED         | Origin 与 APP_URL 或 ADMIN_APP_URL 精确一致、代理透传                          |
 | API_UNAVAILABLE         | API进程和API_INTERNAL_URL                                                      |
 | 会话不保留              | 同源、/api路径、HTTPS/Secure、独立Set-Cookie                                   |
 | INGRESS_*               | IP头受可信入口覆盖，禁止用户自填/绕过                                          |

@@ -29,7 +29,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
     return value;
   };
   const aiMode = mode("AI_MODE", ["demo", "vercel"], "demo") as
-    "demo" | "openai" | "vercel";
+    "demo" | "vercel";
   const paymentMode = mode("PAYMENT_MODE", ["demo", "paypal"], "demo") as
     "demo" | "paypal";
   const emailMode = mode("EMAIL_MODE", ["demo", "resend"], "demo") as
@@ -55,10 +55,6 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const required = (name: string) => {
     if (!env[name]) throw new Error(`${name} is required`);
   };
-  if (aiMode === "openai") {
-    required("OPENAI_API_KEY");
-    required("OPENAI_MODEL");
-  }
   if (aiMode === "vercel") {
     required("AI_GATEWAY_API_KEY");
     required("AI_GATEWAY_MODEL");
@@ -118,8 +114,6 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
     aiMode,
     paymentMode,
     emailMode,
-    openaiApiKey: env.OPENAI_API_KEY,
-    openaiModel: env.OPENAI_MODEL,
     gatewayApiKey: env.AI_GATEWAY_API_KEY,
     gatewayModel: env.AI_GATEWAY_MODEL,
     paypalClientId: env.PAYPAL_CLIENT_ID,

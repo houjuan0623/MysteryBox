@@ -1,4 +1,4 @@
-import { MongoClient, MongoServerError, type ClientSession, type Collection, type Db } from "mongodb";
+import { MongoClient, MongoError, MongoServerError, type ClientSession, type Collection, type Db } from "mongodb";
 import { createHash } from "node:crypto";
 
 export interface Records {
@@ -67,7 +67,7 @@ interface RecordDocument { _id: string; kind: string; key: string; payload: unkn
 interface GuardDocument { _id: string; version: number; }
 const recordId = (kind:string,key:string) => createHash('sha256').update(JSON.stringify([kind,key])).digest('hex');
 const delay = (ms:number) => new Promise<void>(resolve=>setTimeout(resolve,ms));
-const label = (error:unknown,name:string) => error instanceof MongoServerError && error.hasErrorLabel(name);
+const label = (error:unknown,name:string) => error instanceof MongoError && error.hasErrorLabel(name);
 class MongoRecords implements Records {
   protected records: Collection<RecordDocument>;
   constructor(db:Db,private session?:ClientSession) { this.records=db.collection<RecordDocument>('app_records'); }

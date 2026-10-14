@@ -30,7 +30,7 @@ export default function Privacy() {
         The demo uses a local recommendation engine, simulated checkout, and
         simulated email when those modes are enabled. The app displays these
         modes. A configured production deployment can send interest and goal
-        information to OpenAI, checkout details to PayPal, and email addresses
+        information to Vercel AI Gateway and the configured model provider, checkout details to PayPal, and email addresses
         and messages to the email provider. Official third-party tool websites
         have their own policies.
       </p>
@@ -41,10 +41,18 @@ export default function Privacy() {
         account. They exclude URL query strings, goal text, email addresses, and
         payment fields. The same optional session identifier can accompany box
         and checkout requests to measure the flow. Your browser’s Do Not Track
-        setting is respected. The backend retains usage events for up to 30
-        days.
+        setting is respected. The backend removes usage events older than 30 days in an hourly cleanup.
+        Optional events do not store your account identifier. Opting out stops these usage events.
       </p>
       <AnalyticsPreferences />
+      <h2>Essential account and transaction records</h2>
+      <p>
+        Sign-in timestamps, account creation, saved boxes and order/payment states remain
+        necessary to operate your account and fulfil requests. Administrators can view
+        aggregate counts derived from those records even when optional usage analytics is
+        off. These counts are separate from optional browsing events and do not constitute
+        financial reconciliation or net revenue.
+      </p>
       <h2>Before a production launch</h2>
       <p>
         The operator must publish the legal entity and contact information,

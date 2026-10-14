@@ -8,7 +8,16 @@ Admin可单独dev/build/start。它只提供管理界面和受限同源代理；
 
 首次入口为邮箱OTP登录。会话使用API的mb_session HttpOnly cookie。登录成功不自动成为管理员；角色必须由服务端记录/管理流程决定，不能由浏览器字段、邮箱显示名或隐藏菜单赋予。
 
-最终管理员赋权命令尚待核心实现确认，本检查点不臆造默认管理员或万能邮箱。公开部署前必须完成明确的安全赋权/撤权和非管理员拒绝测试。
+服务端每次请求从有效会话读取当前用户角色。未登录返回 401，普通 member 返回 403；CLI 撤权后，原有效会话的下一次请求也会失去报告权限。没有默认管理员或万能邮箱。
+
+管理员通过本地运维命令赋权/撤权。仅支持 MongoDB，目标账户必须先完成邮箱验证码登录。命令不创建用户、密码或密钥；下列地址仅为占位示例，不授权为任何实际账户赋权：
+
+```bash
+npm run admin:role -- grant verified-operator@example.com
+npm run admin:role -- revoke verified-operator@example.com
+```
+
+运维人员应确认目标邮箱、数据库环境和批准记录后执行；先在隔离库验证角色变更，再准备生产授权流程。MemoryStore 不提供此角色初始化。
 
 ## 2. 代理最小开放集
 
@@ -22,7 +31,7 @@ Admin可单独dev/build/start。它只提供管理界面和受限同源代理；
 - POST /api/auth/verify-code
 - POST /api/auth/logout
 
-其他付款、订单或用户修改路径不应通过Admin代理。API必须实际提供/me或对齐代理契约，并在全部admin/*路由进行角色检查；代理allowlist不能替代后端授权。
+其他付款、订单或用户修改路径不应通过Admin代理。API 已提供 /api/me 与 /api/auth/me 两个身份查询别名，全部 admin/* 路由在后端检查当前管理员角色；代理 allowlist 不能替代后端授权。
 
 API_INTERNAL_URL默认指向API4000。PROXY_SHARED_SECRET和TRUSTED_CLIENT_IP_HEADER遵循相同可信入口规范。后端ADMIN_APP_URL默认为http://localhost:3001，必须是精确origin；生产HTTPS。APP_URL与ADMIN_APP_URL应分别配置，不开放任意来源。
 
@@ -30,17 +39,19 @@ API_INTERNAL_URL默认指向API4000。PROXY_SHARED_SECRET和TRUSTED_CLIENT_IP_HE
 
 所有统计来自本项目第一方activity和users等记录；没有外部分析平台，没有生成假数据。空库显示0或空列表。
 
-| 指标                    | 口径/边界                                              |
-| ----------------------- | ------------------------------------------------------ |
-| page views              | 指定UTC窗口内page_view事件数                           |
-| visitors                | 页面浏览事件中去重的短期浏览器标识，不是已验证真人数   |
-| new users               | createdAt在窗口内的账户数                              |
-| active users            | 登录/Box/checkout活动中的去重userId                    |
-| Free/Premium boxes      | 对应业务事件数，资源事件ID去重                         |
-| demo orders             | 模拟checkout事件，不能代表收费                         |
-| PayPal/paid-order相关数 | 必须区分sandbox/live；不计算净收入，不含退款/争议对账  |
-| interests               | Free/Premium事件的兴趣分布                             |
-| funnel columns          | 同窗口中不同阶段的独立去重访客数，不是同一cohort转化率 |
+| 指标               | 当前口径/边界                                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------------------------- |
+| page views         | UTC 窗口内可选 page_view 事件数                                                                      |
+| visitors           | 页面事件中去重的 HMAC 浏览器标识；不是已验证真人数                                                   |
+| new users          | 持久化用户 createdAt 在窗口内的账户数                                                                |
+| active users       | 持久化用户的最近一次成功登录 lastLoginAt 落在窗口内；不是所有操作活跃度或完整历史登录频次            |
+| Free/Premium boxes | 持久化 Box 为 ready 且 createdAt 在窗口内，按 tier 计数                                              |
+| demo/test orders   | 持久化订单 createdAt 在窗口内，paymentEnvironment 为 demo/sandbox                                    |
+| paid orders        | 持久化订单 paymentStatus=completed、paymentEnvironment=live 且 paidAt 在窗口内；不受生成成功与否影响 |
+| interests          | 上述 ready Box 的 brief.interest 分布                                                                |
+| funnel columns     | 可选事件中各阶段独立去重浏览器数；不是同一 cohort 转化率                                             |
+
+订单、Box 与账户计数来自必要业务记录，不依赖可选活动采集；关闭可选统计不会删去必要业务总量。已付款生成失败和 webhook 履约按持久化付款状态计数。paidOrders 仍不是净收入，不扣退款/争议，也不是完整财务对账报告。Box 按创建时间而非就绪时间筛选；历史窗口的结果可能随稍后完成生成而变化。lastLoginAt 仅保留最近成功登录，后续登录可能使账户不再落在较早窗口，不能据此计算完整历史留存。
 
 清除浏览器存储、机器人、重复设备都会影响访客数。用户列表含邮箱，属于私有管理数据，严格限管理员，不在公开首页或外部分析中展示。
 
@@ -48,9 +59,11 @@ API_INTERNAL_URL默认指向API4000。PROXY_SHARED_SECRET和TRUSTED_CLIENT_IP_HE
 
 ## 4. 采集与保留
 
-activity仅保存固定字段：event ID/type/time、可选userId/interest/mode/path以及HMAC化浏览器标识，不采完整请求正文、原始IP、设备指纹、验证码或供应商秘密。事件类型包含page_view、registration、login、free_box、premium_box、checkout。
+当前可选 activity 写入不保留账户 ID；字段为 event ID/type/time、可选 interest/mode/paymentEnvironment/path 及 HMAC 化浏览器标识，不采完整请求正文、原始 IP、设备指纹、邮箱、验证码或供应商秘密。业务入口没有 visitor header 时跳过可选事件。事件枚举含 page_view、registration、login、free_box、premium_box、checkout；新用户数直接读 users.createdAt，不依赖 registration 事件。
 
-设计事件保留期为30天，prune清理函数和实际调度必须一起验证；不能仅因函数存在就宣称数据已按期删除。账户/订单保留另由政策决定。
+当前后台每小时运行 prune，删除超过 30 天的 activity；进程停机期间不会执行清理，因此这不是精确到秒的删除承诺。需在运营中观察清理异常及执行结果。账户/订单保留另由政策决定。
+
+页面活动接口严格接收 eventId/visitorId UUID 与四个固定 path，不接收 goal、email 或任意 URL。前台 sessionStorage 保存短期访客 UUID，服务端只存 HMAC 后标识；前台提供关闭选项并遵守 Do Not Track。可选漏斗事件由带有访客标识的业务入口产生，记录失败不回滚订单或 Box；关闭可选统计不等于不保存必要订单、Box、账户和最近登录记录。
 
 ## 5. 新验收要求
 

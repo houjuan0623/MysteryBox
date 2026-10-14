@@ -2,7 +2,7 @@ import type { Box, Interest, Tool } from "@mysterybox/shared";
 
 /** 从保留的源代码文本重建；配置仅由服务端环境加载。 */
 export interface ProviderConfig {
-  aiMode: "demo" | "openai" | "vercel";
+  aiMode: "demo" | "vercel";
   paymentMode: "demo" | "paypal";
   emailMode: "demo" | "resend";
   openaiApiKey?: string;

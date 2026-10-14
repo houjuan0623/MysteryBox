@@ -1,0 +1,75 @@
+{
+  "checkedAtUtc": "2026-10-14T07:56:14.942834+00:00",
+  "scope": "Official Spec Kit adoption and documentation verification only; not application integration verification.",
+  "officialCli": {
+    "package": "specify-cli==1.2.0",
+    "source": "Official PyPI channel",
+    "initExitCode": 0,
+    "integration": "generic",
+    "script": "sh",
+    "isolatedInitialization": true,
+    "overwriteExistingApplicationFiles": false,
+    "commandsDirectory": ".specify/commands/",
+    "versionLog": "cli-version.json",
+    "initLog": "cli-init.log"
+  },
+  "executedOfficialScripts": [
+    {
+      "command": "resolve-template.sh constitution-template --json",
+      "exitCode": 0
+    },
+    {
+      "command": "create-new-feature.sh --json --short-name three-app-foundation --number 1 <feature description>",
+      "exitCode": 0
+    },
+    {
+      "command": "setup-plan.sh --json",
+      "exitCode": 0
+    },
+    {
+      "command": "setup-tasks.sh --json",
+      "exitCode": 0
+    },
+    {
+      "command": "check-prerequisites.sh --json --require-spec --require-tasks --include-tasks",
+      "exitCode": 0,
+      "log": "prerequisites.json"
+    }
+  ],
+  "officialArtifactIntrospection": {
+    "command": "specify artifact list --json",
+    "exitCode": 0,
+    "artifactCount": 19,
+    "log": "artifacts.json"
+  },
+  "verification": {
+    "unchangedOfficialFiles": 29,
+    "intentionalProjectSubstitution": [
+      "memory/constitution.md"
+    ],
+    "officialTemplatesAndScripts": "all unchanged",
+    "bashSyntax": "6 scripts passed bash -n",
+    "projectMarkdownFormatting": "Prettier passed",
+    "projectMarkdownRelativeLinks": "all present",
+    "codeFences": "balanced",
+    "functionalRequirements": 20,
+    "tasks": 35,
+    "allRequirementsTraced": true,
+    "sourcePlan": {
+      "bytes": 6729,
+      "sha256": "b2cd871409b4099d5f521c5e7b9875317fc139c966d033f15789581871738180",
+      "unchanged": true
+    }
+  },
+  "notExecuted": [
+    "Native agent slash-command registration",
+    "Application source implementation by this adoption task",
+    "Bundled workflow execution",
+    "Spec Kit MCP server",
+    "Git feature branch creation",
+    "GitHub issue creation or publishing",
+    "Real providers",
+    "Production deployment"
+  ],
+  "overallFeatureVerdict": "Not converged; Mongo/API/admin backend/MCP and final integration gates remain open."
+}

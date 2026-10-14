@@ -7,10 +7,10 @@
 ## 共同约定
 
 - JSON体，Web流式读取/API双层16KB上限；代理超限413 REQUEST_TOO_LARGE。
-- 非webhook修改请求带Origin，必须与APP_URL完全一致，curl亦如此。
+- 非 webhook 修改请求带 Origin，必须与 APP_URL 或 ADMIN_APP_URL 中一个精确 origin 一致，curl 亦如此。
 - Cache-Control:no-store，正常响应含X-Request-Id。
 - mb_session：HttpOnly、SameSite=Lax、Path=/api，生产Secure。
-- 浏览器只通过Web代理。x-mb-client/x-mb-signature是服务间签名身份，不接受浏览器自报限流身份。
+- 浏览器通过各自 Web/Admin 同源代理。x-mb-client/x-mb-signature是服务间签名身份，不接受浏览器自报限流身份。
 - 开发Web以HttpOnly mb_visitor区分浏览器；生产通过可信ingress的单个IP。
 - 错误形态：{error:{code,message,requestId?}}。部分代理/来源拒绝无requestId。
 - 401身份/验证码，403来源/代理身份，404资源不存在或隐藏越权，409状态或幂等冲突，429限流，503暂不可用。
@@ -31,7 +31,7 @@ interest为creator/developer/student/business。goal可省略，默认空串，�
 
 Free和订单创建需Idempotency-Key：16–128位字母/数字/下划线/连字符。同输入保留key重试，改变输入换key。同key改输入409 IDEMPOTENCY_CONFLICT。限额在幂等处理前计数，安全重试仍可能消耗额度。
 
-当前AI_MODE只支持demo/vercel，Vercel AI Gateway是唯一真实入口；公开配置不提供OpenAI直连模式。管理统计是NestJS第一方聚合API，必须服务端验证管理员角色；管理端目标路由为GET /api/admin/summary、/admin/users、/admin/events及/me；后端接入与角色赋权需最终集成验证，详见[管理端契约](admin.md)。这些不是匿名公开接口。
+当前AI_MODE只支持demo/vercel，Vercel AI Gateway是唯一真实入口；公开配置不提供OpenAI直连模式。管理统计是NestJS第一方聚合API，必须服务端验证管理员角色；管理端目标路由为GET /api/admin/summary、/admin/users、/admin/events及/me；后端已接入当前会话与管理员角色检查，完整 HTTP 集成仍需最终验证，详见[管理端契约](admin.md)。这些不是匿名公开接口。
 
 ## 公开接口
 
@@ -75,7 +75,7 @@ webhook不得修改原始JSON；保留paypal-auth-algo/cert-url/transmission-id/
 | ----------------------------- | ------------------------ | -------------------------------------- |
 | POST /api/auth/request-code   | {email}                  | challengeId；仅demo额外developmentCode |
 | POST /api/auth/verify-code    | {challengeId,code}       | {user}和会话cookie                     |
-| GET /api/auth/me              | cookie可选               | {user}或{user:null}                    |
+| GET /api/auth/me 或 /api/me   | cookie可选               | {user}或{user:null}                    |
 | POST /api/auth/logout         | cookie可选               | {ok:true}并清会话/cookie               |
 | GET /api/me/boxes             | 必须登录                 | {boxes}                                |
 | GET /api/me/favorites         | 必须登录                 | {toolIds}                              |
@@ -83,6 +83,17 @@ webhook不得修改原始JSON；保留paypal-auth-algo/cert-url/transmission-id/
 | POST /api/me/claim-box        | 登录+{boxId,accessToken} | {claimed:true}                         |
 
 challengeId为UUID，码6位，有效10分钟，最多5次尝试，成功不可重用。claim需要正确资源凭证，不能夺取其他用户已归属Box。
+
+## 第一方活动与管理报告
+
+| 方法与路径             | 输入/权限                                                                                    | 输出                                                                          |
+| ---------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| POST /api/activity     | 严格 JSON：eventId UUID、visitorId UUID、path 为 /、/discover、/box、/account；正常来源/限流 | 202 {accepted:true}                                                           |
+| GET /api/admin/summary | 当前 admin 会话；from/to 可选                                                                | period、counts、interests、funnel、notes                                      |
+| GET /api/admin/users   | 当前 admin 会话；同一 UTC 窗口                                                               | {users}，最多 100 个窗口内最近注册账户                                        |
+| GET /api/admin/events  | 当前 admin 会话；同一 UTC 窗口                                                               | {events}，最多 100 个最新事件，仅 id/type/at/interest/mode/paymentEnvironment |
+
+未登录报告返回 401，member 返回 403。角色每次从服务端账户读取，客户端不能传 role 赋权。日期起含止不含，默认近 7 天，最多 31 天；错误窗口返回 400 INVALID_PERIOD。页面事件只允许固定粗粒度路径，不接收查询串或完整 Box ID。可选活动写入失败不回滚成功业务，因此 202 不承诺该事件已持久保存。订单/Box/账户总量另由必要持久化业务记录计算，可选事件不保留账户 ID；报表仍不是净收入或完整付款对账。实际口径及角色 CLI 见[管理端说明](admin.md)。
 
 ## 预设额度
 
@@ -95,6 +106,8 @@ challengeId为UUID，码6位，有效10分钟，最多5次尝试，成功不可�
 | 请求登录码            | 20/限流主体/小时，另5/规范化邮箱/小时                               |
 
 登录用户Free按userId；匿名经Web按生产可信IP/开发visitor。开发直连API才回退req.ip；生产无有效签名不能提供限流主体。不能把任意XFF当事实。这不是对外正式套餐承诺，需边缘防刷与预算。
+
+页面活动另限 200 次/限流主体/小时；管理报告限管理员，用户与事件列表各最多 100 条。
 
 ## 拒绝路径
 

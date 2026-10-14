@@ -12,23 +12,23 @@
 
 ## 2. 逻辑聚合
 
-| kind                           | key                   | 主要payload                                                                                                        |
-| ------------------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| tools                          | 稳定Tool ID           | 名称、兴趣、能力、HTTPS官网/来源、核验日期、费用提示、限制                                                         |
-| catalog_versions               | current               | 目录版本 version；条数由 tools 实际记录计算                                                                        |
-| boxes                          | Box UUID              | ownerId、brief、tier、queued/ready/failed、box                                                                     |
-| orders                         | 本地Order UUID        | brief、amountCents、USD、providerOrderId、createKey、captureKey、paymentStatus、generationStatus、captureId、boxId |
-| captures                       | Provider Capture ID   | 不可改成另一订单的orderId                                                                                          |
-| users                          | User UUID             | 已验证规范化邮箱、member/admin角色、createdAt/lastLoginAt                                                          |
-| user_emails                    | 邮箱哈希              | 唯一User ID映射                                                                                                    |
-| challenges                     | Challenge UUID        | 邮箱、码HMAC、expiresAt、attempts、used                                                                            |
-| sessions                       | 高熵session token哈希 | User ID、expiresAt                                                                                                 |
-| favorites                      | User ID               | 不重复Tool ID数组                                                                                                  |
-| free_requests / order_requests | 请求幂等键            | brief/user指纹与原资源ID                                                                                           |
-| deliveries                     | Box+邮箱关联键        | 收件邮箱、pending/failed/sent/demo、attempts、nextAttemptAt、createdAt                                             |
-| webhooks                       | PayPal Event ID       | providerOrderId、queued/done、attempts、nextAttemptAt                                                              |
-| limits                         | scope+主体哈希+时间桶 | count                                                                                                              |
-| activity                       | 稳定事件ID            | 固定事件type/at、HMAC访客标识、可选userId/interest/mode/path；第一方统计                                           |
+| kind                           | key                   | 主要payload                                                                                                                                    |
+| ------------------------------ | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| tools                          | 稳定Tool ID           | 名称、兴趣、能力、HTTPS官网/来源、核验日期、费用提示、限制                                                                                     |
+| catalog_versions               | current               | 目录版本 version；条数由 tools 实际记录计算                                                                                                    |
+| boxes                          | Box UUID              | ownerId、brief、tier、queued/ready/failed、box                                                                                                 |
+| orders                         | 本地Order UUID        | brief、amountCents、USD、providerOrderId、createKey、captureKey、paymentStatus、generationStatus、captureId、boxId、paymentEnvironment、paidAt |
+| captures                       | Provider Capture ID   | 不可改成另一订单的orderId                                                                                                                      |
+| users                          | User UUID             | 已验证规范化邮箱、member/admin角色、createdAt/lastLoginAt                                                                                      |
+| user_emails                    | 邮箱哈希              | 唯一User ID映射                                                                                                                                |
+| challenges                     | Challenge UUID        | 邮箱、码HMAC、expiresAt、attempts、used                                                                                                        |
+| sessions                       | 高熵session token哈希 | User ID、expiresAt                                                                                                                             |
+| favorites                      | User ID               | 不重复Tool ID数组                                                                                                                              |
+| free_requests / order_requests | 请求幂等键            | brief/user指纹与原资源ID                                                                                                                       |
+| deliveries                     | Box+邮箱关联键        | 收件邮箱、pending/failed/sent/demo、attempts、nextAttemptAt、createdAt                                                                         |
+| webhooks                       | PayPal Event ID       | providerOrderId、queued/done、attempts、nextAttemptAt                                                                                          |
+| limits                         | scope+主体哈希+时间桶 | count                                                                                                                                          |
+| activity                       | 稳定事件ID            | 可选事件 type/at、HMAC 访客标识、interest/mode/paymentEnvironment/path；当前写入去掉账户 ID                                                    |
 
 transaction_guards集合保存_id=业务键与version。事务先递增对应guard以引发同键竞争；不存在lease/TTL自动解锁承诺。只在领域回调开始前为TransientTransactionError重试竞争，等待窗口最多45秒；回调开始后不重跑业务。commit不明确时最多重试同一commit六次，不能再次执行provider动作。
 
@@ -59,8 +59,8 @@ transaction_guards集合保存_id=业务键与version。事务先递增对应gua
 
 ## 7. 必须补的真库测试
 
-连接replica set、索引唯一性、未初始化拒绝、回滚、竞争guard跨连接互斥、同订单并发、同验证码并发、持久化重开、目录seed/版本、进程中断后任务恢复、事务冲突不重放外部回调、提交结果不明确恢复。MongoDB实测当前待执行。
+连接replica set、索引唯一性、未初始化拒绝、回滚、竞争guard跨连接互斥、同订单并发、同验证码并发、持久化重开、目录seed/版本、进程中断后任务恢复、事务冲突不重放外部回调、提交结果不明确恢复。2026-10-14 已有 MongoDB 8.0.17 真副本集局部检查通过：索引初始化、重复 insert、20 并发 guard、回滚、目录、同订单模拟 capture 和重开连接持久化。未知 commit 故障注入、进程中断后队列恢复及生产部署仍未验证，见[验收证据](acceptance.md)。
 
 ## 8. 管理统计的数据边界
 
-Admin读取第一方activity/users聚合，事件ID去重，UTC起含止不含。浏览器标识不是真人数，漏斗列不是cohort转化率。设计activity保留30天需验证prune实际执行；角色赋权和管理员邮箱列表访问必须有后端授权。详见[管理端说明](admin.md)。
+Admin 从必要 orders/boxes/users 记录计算订单、ready Box 和账户总量，从可选 activity 计算页面浏览与独立访客列。事件 ID 去重，UTC 起含止不含。浏览器标识不是真人数，漏斗列不是cohort转化率。activity 保留期 30 天，后台每小时调度清理；角色由本地授权 CLI 赋予，报告每次检查服务端当前角色。邮箱只在管理员用户报告中返回。详见[管理端说明](admin.md)。

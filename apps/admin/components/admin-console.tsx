@@ -571,7 +571,7 @@ function Overview({ summary }: { summary: Summary }) {
           icon={<UsersRound className="size-4" />}
         />
         <Metric
-          label="Active accounts"
+          label="Accounts last signed in"
           value={c.activeUsers}
           detail="Login, box, or checkout activity"
           icon={<UserRound className="size-4" />}

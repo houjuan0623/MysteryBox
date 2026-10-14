@@ -1,0 +1,20 @@
+{
+  "at": "2026-10-14T07:52:12.201Z",
+  "modes": "all-demo",
+  "passed": 13,
+  "checks": [
+    "free:creator",
+    "free:developer",
+    "free:student",
+    "free:business",
+    "free-idempotency",
+    "premium-demo",
+    "origin-protection",
+    "guest-admin-denied",
+    "admin-origin-otp-and-me-alias",
+    "member-admin-denied",
+    "claim-history",
+    "activity-strict-contract",
+    "logout"
+  ]
+}

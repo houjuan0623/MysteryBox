@@ -1,3 +1,5 @@
+// 已退役直连适配器仅保留隔离回归测试；产品工厂只接受demo/vercel。
+import { OpenAiProvider } from "./ai";
 // Reconstructed focused tests from retained source; fake fetch only, never live credentials.
 import assert from "node:assert/strict";
 import test from "node:test";
@@ -6,7 +8,6 @@ import {
   createProviders,
   DemoAiProvider,
   DemoPaymentProvider,
-  OpenAiProvider,
   PayPalProvider,
   ProviderError,
   ResendEmailProvider,
@@ -362,8 +363,8 @@ test("provider timeout aborts the request", async () => {
 });
 test("real mode never silently falls back without credentials or explicit PayPal mode", () => {
   assert.throws(
-    () => createProviders({ ...config, aiMode: "openai" }),
-    hasCode("PROVIDER_NOT_CONFIGURED"),
+    () => createProviders({ ...config, aiMode: "openai" } as unknown as ProviderConfig),
+    /Only demo or Vercel/,
   );
   assert.throws(
     () => new PayPalProvider({ ...live, paypalMode: undefined }),

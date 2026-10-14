@@ -33,7 +33,7 @@ export function verifyClientIdentity(
     if (
       typeof value.subject !== "string" ||
       value.subject.length > 200 ||
-      !/^(?:ip|visitor):[a-zA-Z0-9:.\-]+$/.test(value.subject) ||
+      !/^(?:ip|visitor):[a-zA-Z0-9:.-]+$/.test(value.subject) ||
       typeof value.timestamp !== "number" ||
       !Number.isSafeInteger(value.timestamp) ||
       Math.abs(now - value.timestamp) > 60000

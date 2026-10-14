@@ -6,6 +6,7 @@ import type { NextConfig } from "next";
 const rootEnv = resolve(process.cwd(), "../../.env");
 if (existsSync(rootEnv)) loadEnvFile(rootEnv);
 const config: NextConfig = {
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   transpilePackages: ["@mysterybox/shared"],
   poweredByHeader: false,
   reactStrictMode: true,

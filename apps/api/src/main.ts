@@ -1,4 +1,5 @@
 import "reflect-metadata";
+import { attachMcp } from "./mcp";
 import { verifyClientIdentity } from "../../../packages/shared/src/proxy";
 import { randomUUID } from "node:crypto";
 import { NestFactory } from "@nestjs/core";
@@ -25,10 +26,10 @@ import { z } from "zod";
 import {
   briefSchema,
   INTERESTS,
-  type User,
 } from "../../../packages/shared/src";
-import { catalog, CATALOG_VERSION } from "./catalog";
 import { publicConfig, readConfig } from "./config";
+import { requireAdmin } from "./authz";
+import { createHash } from "node:crypto";
 import { AppError, MysteryBoxService } from "./domain";
 import { MemoryStore, MongoStore } from "./store";
 import { createProviders } from "./providers";
@@ -99,6 +100,9 @@ async function user(req: Request, required = false) {
     throw new AppError(401, "AUTH_REQUIRED", "Please sign in to continue.");
   return result;
 }
+// 统计失败不能把已完成的支付/生成变成错误；仅记录无敏感字段的运维事件。
+async function activity(event:Parameters<typeof service.analytics.record>[0]) {if(!event.visitorId)return; const {userId:_userId,...optionalEvent}=event; try{await service.analytics.record(optionalEvent);}catch{console.error('{"event":"analytics_record_failed"}');}}
+function period(from?:string,to?:string) {try{return service.analytics.period(from,to);}catch{throw new AppError(400,"INVALID_PERIOD","Choose a valid UTC period up to 31 days.");}}
 const emailSchema = z.object({ email: z.email().max(254) }).strict();
 
 @Catch()
@@ -140,6 +144,22 @@ class Errors implements ExceptionFilter {
 
 @Controller()
 class ApiController {
+
+  @Post("activity") @HttpCode(202) async pageView(@Body() body:unknown,@Req() req:Request) {
+    const input=parse(z.object({eventId:z.uuid(),visitorId:z.uuid(),path:z.enum(["/","/discover","/box","/account"])}).strict(),body);
+    await service.limit("activity",rateSubject(req),200,3600000);
+    await activity({id:`page:${input.eventId}`,type:"page_view",path:input.path,visitorId:input.visitorId});
+    return {accepted:true};
+  }
+  @Get("admin/summary") async summary(@Req() req:Request,@Query("from") from?:string,@Query("to") to?:string) {
+    requireAdmin(await user(req));return service.analytics.summary(period(from,to));
+  }
+  @Get("admin/users") async adminUsers(@Req() req:Request,@Query("from") from?:string,@Query("to") to?:string) {
+    requireAdmin(await user(req));return {users:await service.analytics.users(period(from,to))};
+  }
+  @Get("admin/events") async adminEvents(@Req() req:Request,@Query("from") from?:string,@Query("to") to?:string) {
+    requireAdmin(await user(req));return {events:(await service.analytics.events(period(from,to))).sort((a,b)=>b.at.localeCompare(a.at)).slice(0,100).map(({id,type,at,interest,mode,paymentEnvironment})=>({id,type,at,interest,mode,paymentEnvironment}))};
+  }
   @Get("health") async health() {
     await store.ready();
     return { ok: true, storage: store.mode, demo: publicConfig(config).demo };
@@ -183,7 +203,9 @@ class ApiController {
       config.freeLimit,
       86400000,
     );
-    return service.free(brief, header(req, "Idempotency-Key") || "", current);
+    const result = await service.free(brief, header(req, "Idempotency-Key") || "", current);
+    await activity({id:`free:${result.box.id}`,type:"free_box",interest:brief.interest,userId:current?.id,visitorId:header(req,"x-analytics-visitor")});
+    return result;
   }
   @Get("boxes/:id") async box(@Param("id") id: string, @Req() req: Request) {
     return {
@@ -219,11 +241,10 @@ class ApiController {
   ) {
     const brief = parse(briefSchema, body);
     await service.limit("checkout", rateSubject(req), 20, 3600000);
-    return service.createOrder(
-      brief,
-      header(req, "Idempotency-Key") || "",
-      await user(req),
-    );
+    const current=await user(req);
+    const result=await service.createOrder(brief,header(req,"Idempotency-Key")||"",current);
+    await activity({id:`checkout:${result.orderId}`,type:"checkout",interest:brief.interest,userId:current?.id,visitorId:header(req,"x-analytics-visitor"),mode:config.paymentMode,paymentEnvironment:config.paymentMode==="demo"?"demo":config.paypalMode});
+    return result;
   }
   @Get("checkout/orders/:id") async order(
     @Param("id") id: string,
@@ -242,11 +263,10 @@ class ApiController {
   ) {
     parse(z.object({}).strict(), body);
     await service.limit("capture", rateSubject(req), 50, 3600000);
-    return service.captureOrder(
-      id,
-      header(req, "X-Order-Token"),
-      await user(req),
-    );
+    const current=await user(req);
+    const result=await service.captureOrder(id,header(req,"X-Order-Token"),current,false);
+    await activity({id:`premium:${result.box.id}`,type:"premium_box",interest:result.box.interest,userId:current?.id,visitorId:header(req,"x-analytics-visitor"),mode:config.paymentMode,paymentEnvironment:config.paymentMode==="demo"?"demo":config.paypalMode});
+    return result;
   }
   @Post("checkout/orders/:id/demo-complete") @HttpCode(200) async demoCapture(
     @Param("id") id: string,
@@ -255,12 +275,10 @@ class ApiController {
   ) {
     parse(z.object({}).strict(), body);
     await service.limit("capture", rateSubject(req), 50, 3600000);
-    return service.captureOrder(
-      id,
-      header(req, "X-Order-Token"),
-      await user(req),
-      true,
-    );
+    const current=await user(req);
+    const result=await service.captureOrder(id,header(req,"X-Order-Token"),current,true);
+    await activity({id:`premium:${result.box.id}`,type:"premium_box",interest:result.box.interest,userId:current?.id,visitorId:header(req,"x-analytics-visitor"),mode:config.paymentMode,paymentEnvironment:config.paymentMode==="demo"?"demo":config.paypalMode});
+    return result;
   }
   @Post("webhooks/paypal") @HttpCode(202) async webhook(
     @Req() req: Request,
@@ -286,6 +304,7 @@ class ApiController {
     return service.requestCode(input.email);
   }
   @Post("auth/verify-code") @HttpCode(200) async verify(
+    @Req() req: Request,
     @Body() body: unknown,
     @Res({ passthrough: true }) res: Response,
   ) {
@@ -303,9 +322,10 @@ class ApiController {
       maxAge: 7 * 86400000,
       path: "/api",
     });
+    await activity({id:`login:${createHash("sha256").update(result.token).digest("hex")}`,type:"login",userId:result.user.id,visitorId:header(req,"x-analytics-visitor")});
     return { user: result.user };
   }
-  @Get("auth/me") async me(@Req() req: Request) {
+  @Get(["auth/me", "me"]) async me(@Req() req: Request) {
     return { user: (await user(req)) || null };
   }
   @Post("auth/logout") @HttpCode(200) async logout(
@@ -363,6 +383,7 @@ export async function start() {
   app.setGlobalPrefix("api");
   app.useGlobalFilters(new Errors());
   app.use(helmet());
+  attachMcp(app, { store, analytics: service.analytics });
   app.use(
     json({
       limit: "16kb",
@@ -374,13 +395,14 @@ export async function start() {
   );
 
   app.enableCors({
-    origin: config.appUrl,
+    origin: [config.appUrl, config.adminAppUrl],
     credentials: true,
     allowedHeaders: [
       "Content-Type",
       "Idempotency-Key",
       "X-Box-Token",
       "X-Order-Token",
+      "X-Analytics-Visitor",
     ],
     methods: ["GET", "POST", "PUT", "OPTIONS"],
   });
@@ -391,7 +413,7 @@ export async function start() {
     if (
       !["GET", "HEAD", "OPTIONS"].includes(req.method) &&
       req.path !== "/api/webhooks/paypal" &&
-      req.get("origin") !== config.appUrl
+      ![config.appUrl, config.adminAppUrl].includes(req.get("origin") || "")
     ) {
       res
         .status(403)
@@ -419,11 +441,13 @@ export async function start() {
     }),
   );
   let processing = false;
+  let lastPrune = 0;
   const timer = setInterval(async () => {
     if (processing) return;
     processing = true;
     try {
       await service.processEvents();
+      if(Date.now()-lastPrune>3600000){await service.analytics.prune();lastPrune=Date.now();}
     } catch {
       console.error('{"event":"webhook_worker_failed"}');
     } finally {

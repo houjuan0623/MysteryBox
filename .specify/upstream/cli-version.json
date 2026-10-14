@@ -1,0 +1,21 @@
+{
+  "cli_version": "1.2.0",
+  "runtime": {
+    "python": "3.12.14",
+    "openssl": "OpenSSL 3.5.8 25 Aug 2026"
+  },
+  "system": {
+    "platform": "Linux",
+    "architecture": "x86_64",
+    "os_version": "#1 SMP Sat Sep 26 20:02:31 UTC 2026"
+  },
+  "features": {
+    "controlled_multi_install_integrations": true,
+    "integration_use_command": true,
+    "multi_install_safe_registry_metadata": true,
+    "integration_upgrade_command": true,
+    "self_check_command": true,
+    "workflow_catalog": true,
+    "bundled_templates": true
+  }
+}

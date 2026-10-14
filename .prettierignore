@@ -4,3 +4,7 @@ dist
 package-lock.json
 recovery-reference
 docs/source-plan.md
+
+**/vendor/**
+**/next-env.d.ts
+.specify/

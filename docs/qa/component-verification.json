@@ -1,6 +1,6 @@
 {
-  "recordedAt": "2026-10-14T07:23:40.242777+00:00",
-  "scope": "New restoration component checks only; not complete API/Mongo/provider/browser verification.",
+  "recordedAt": "2026-10-14T07:52:57.328503+00:00",
+  "scope": "New restoration scoped component and actual Mongo replica-set checks; not complete quality gate/HTTP/browser/provider verification.",
   "web": {
     "reportedAtApprox": "2026-10-14T07:13:00Z",
     "command": "npm run typecheck -w @mysterybox/web && npm run test -w @mysterybox/web && npm run build -w @mysterybox/web",
@@ -48,9 +48,44 @@
     }
   },
   "notCovered": [
-    "Full Nest authentication/role/analytics integration",
-    "MongoDB replica-set integration",
+    "Full Nest HTTP authentication/role/analytics integration",
+    "Full quality gate after all changes",
+    "Browser flows on replacement host",
     "Real AI/payment/email providers",
     "Public production deployment"
-  ]
+  ],
+  "api": {
+    "reportedAtApprox": "2026-10-14T07:49:00Z",
+    "domainSecurityTests": 17,
+    "providerMockTests": 33,
+    "evidenceType": "Core implementation report; no raw grouped stdout yet provided",
+    "fullQualityGate": "pending",
+    "fullHttpIntegration": "pending"
+  },
+  "mongo": {
+    "reportedAtApprox": "2026-10-14T07:49:00Z",
+    "engine": "Actual mongod 8.0.17 single-node replica set via mongodb-memory-server",
+    "testFile": "apps/api/test/mongo.test.ts",
+    "exitCode": 0,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "log": "docs/qa/mongo-replica-verification.log",
+    "logSha256": "4171879c0e3c45d78be122cb920ca16186ce758be8f154c9a73ed30a491a8011",
+    "coverage": [
+      "index initialization and repeated insert behavior",
+      "20 competing business-guard updates across two Mongo connections",
+      "transaction rollback",
+      "unseeded catalog rejection and 16-tool/version load",
+      "same-order mock-provider capture concurrency",
+      "read persistence after client close and reconnect"
+    ],
+    "notCovered": [
+      "mongod process restart",
+      "UnknownTransactionCommitResult fault injection",
+      "network partition",
+      "actual external provider calls",
+      "production topology/backup recovery"
+    ]
+  }
 }

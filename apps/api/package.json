@@ -7,10 +7,11 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/apps/api/src/main.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "tsx --test test/*.test.ts src/providers/*.test.ts",
-    "db:migrate": "tsx src/migrate.ts",
-    "db:seed": "tsx src/seed.ts",
-    "db:init": "tsx src/migrate.ts"
+    "test": "node --import tsx --test test/*.test.ts src/providers/*.test.ts src/mcp/*.test.ts",
+    "db:migrate": "node --import tsx src/migrate.ts",
+    "db:seed": "node --import tsx src/seed.ts",
+    "db:init": "node --import tsx src/migrate.ts",
+    "admin:role": "node --import tsx src/admin-role.ts"
   },
   "dependencies": {
     "@mysterybox/shared": "*",
@@ -22,7 +23,8 @@
     "rxjs": "^7.8.2",
     "zod": "^4.1.12",
     "helmet": "^8.1.0",
-    "mongodb": "^6.21.0"
+    "mongodb": "^6.21.0",
+    "@modelcontextprotocol/sdk": "1.32.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
