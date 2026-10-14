@@ -13,16 +13,40 @@ export function analyticsPath(pathname: string): AnalyticsPath | null {
 export function doNotTrackEnabled(): boolean {
   return typeof window !== "undefined" && window.navigator.doNotTrack === "1";
 }
-export function analyticsAllowed(): boolean {
-  if (typeof window === "undefined" || doNotTrackEnabled()) return false;
+export type AnalyticsPreference =
+  "loading" | "enabled" | "disabled" | "do-not-track" | "unavailable";
+// 保存失败时也立即停止当前 tab 的分析，不能因存储异常继续发送访问标识。
+const blockedTabs = new WeakSet<object>();
+export function analyticsServerSnapshot(): AnalyticsPreference {
+  return "loading";
+}
+export function analyticsPreference(): AnalyticsPreference {
+  if (typeof window === "undefined") return "loading";
+  if (doNotTrackEnabled()) return "do-not-track";
+  if (blockedTabs.has(window)) return "disabled";
   try {
-    return window.localStorage.getItem(ANALYTICS_PREFERENCE_KEY) !== "off";
+    return window.localStorage.getItem(ANALYTICS_PREFERENCE_KEY) === "off"
+      ? "disabled"
+      : "enabled";
   } catch {
-    return false;
+    return "unavailable";
   }
 }
+export function analyticsAllowed(): boolean {
+  return analyticsPreference() === "enabled";
+}
 export function analyticsVisitor(): string | null {
-  if (!analyticsAllowed()) return null;
+  if (!analyticsAllowed()) {
+    // 同步清理其他 tab 的退出选择或 Do Not Track 变更后留下的旧标识。
+    if (typeof window !== "undefined") {
+      try {
+        window.sessionStorage.removeItem(ANALYTICS_VISITOR_KEY);
+      } catch {
+        /* Storage may be unavailable. */
+      }
+    }
+    return null;
+  }
   try {
     const previous = window.sessionStorage.getItem(ANALYTICS_VISITOR_KEY);
     if (
@@ -41,17 +65,23 @@ export function analyticsVisitor(): string | null {
 }
 export function setAnalyticsAllowed(enabled: boolean): boolean {
   if (typeof window === "undefined") return false;
+  let saved = false;
   try {
-    window.localStorage.setItem(
-      ANALYTICS_PREFERENCE_KEY,
-      enabled ? "on" : "off",
-    );
-    if (!enabled) window.sessionStorage.removeItem(ANALYTICS_VISITOR_KEY);
-    window.dispatchEvent(new Event(ANALYTICS_CHANGE_EVENT));
-    return true;
+    window.localStorage.setItem(ANALYTICS_PREFERENCE_KEY, enabled ? "on" : "off");
+    saved = true;
+    blockedTabs.delete(window);
   } catch {
-    return false;
+    blockedTabs.add(window);
   }
+  if (!enabled || !saved) {
+    try {
+      window.sessionStorage.removeItem(ANALYTICS_VISITOR_KEY);
+    } catch {
+      /* Sending remains disabled even if storage cannot be cleared. */
+    }
+  }
+  window.dispatchEvent(new Event(ANALYTICS_CHANGE_EVENT));
+  return saved;
 }
 export function subscribeAnalytics(listener: () => void) {
   window.addEventListener("storage", listener);

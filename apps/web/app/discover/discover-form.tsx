@@ -41,9 +41,7 @@ export function DiscoverForm() {
   const search = useSearchParams();
   const requested = search.get("interest");
   const [interest, setInterest] = useState<Interest>(
-    INTERESTS.includes(requested as Interest)
-      ? (requested as Interest)
-      : "creator",
+    INTERESTS.includes(requested as Interest) ? (requested as Interest) : "creator",
   );
   const [goal, setGoal] = useState("");
   const [tier, setTier] = useState<"free" | "premium">(
@@ -86,9 +84,7 @@ export function DiscoverForm() {
         });
         saveOrder(order);
         if (order.demo) {
-          router.push(
-            `/checkout/return?order=${encodeURIComponent(order.orderId)}`,
-          );
+          router.push(`/checkout/return?order=${encodeURIComponent(order.orderId)}`);
         } else if (order.approvalUrl) {
           window.location.assign(order.approvalUrl);
         } else
@@ -116,8 +112,8 @@ export function DiscoverForm() {
         </div>
         {search.get("cancelled") === "1" && (
           <div className="info-notice" role="status">
-            Checkout was canceled. No new box was opened. You can try again
-            whenever you’re ready.
+            Checkout was canceled. No new box was opened. You can try again whenever
+            you’re ready.
           </div>
         )}
         <form
@@ -146,9 +142,7 @@ export function DiscoverForm() {
                     />
                     <Icon name={icons[id]} size={24} />
                     <span>{INTEREST_LABELS[id]}</span>
-                    <span className="radio-circle">
-                      {interest === id && <span />}
-                    </span>
+                    <span className="radio-circle">{interest === id && <span />}</span>
                   </label>
                 ))}
               </div>
@@ -171,8 +165,8 @@ export function DiscoverForm() {
               />
               <div className="input-helper">
                 <span id="goal-help">
-                  A specific goal helps us find a better fit. Don’t include
-                  sensitive information.
+                  A specific goal helps us find a better fit. Don’t include sensitive
+                  information.
                 </span>
                 <span>{goal.length}/500</span>
               </div>
@@ -198,9 +192,7 @@ export function DiscoverForm() {
             <div className="eyebrow">PICK YOUR LEVEL OF DISCOVERY</div>
             <fieldset>
               <legend className="sr-only">Choose a box</legend>
-              <label
-                className={`tier-option ${tier === "free" ? "selected" : ""}`}
-              >
+              <label className={`tier-option ${tier === "free" ? "selected" : ""}`}>
                 <input
                   type="radio"
                   name="tier"
@@ -214,9 +206,7 @@ export function DiscoverForm() {
                 </div>
                 <p>1 matched tool, a prompt, and a place to start.</p>
               </label>
-              <label
-                className={`tier-option ${tier === "premium" ? "selected" : ""}`}
-              >
+              <label className={`tier-option ${tier === "premium" ? "selected" : ""}`}>
                 <input
                   type="radio"
                   name="tier"
@@ -230,30 +220,27 @@ export function DiscoverForm() {
                   </strong>
                   <span>{config ? price(config.premiumPriceCents) : "—"}</span>
                 </div>
-                <p>
-                  3 complementary tools, useful prompts, and a connected
-                  workflow.
-                </p>
-                <span className="one-time">
-                  One-time purchase · no recurring charge
-                </span>
+                <p>3 complementary tools, useful prompts, and a connected workflow.</p>
+                <span className="one-time">One-time purchase · no recurring charge</span>
               </label>
             </fieldset>
-            {configError && (
-              <ErrorNotice message={configError} retry={loadConfig} />
-            )}
+            {configError && <ErrorNotice message={configError} retry={loadConfig} />}
             <Button
               type="submit"
               className="h-auto min-h-12 rounded-lg px-5 py-3 text-xs font-semibold gap-3 whitespace-normal bg-primary text-primary-foreground hover:bg-primary/90 w-full"
               disabled={busy || !config}
+              aria-busy={busy}
+              aria-label={
+                busy
+                  ? tier === "free"
+                    ? "Curating your box…"
+                    : "Preparing checkout…"
+                  : undefined
+              }
             >
               {busy ? (
                 <Spinner
-                  label={
-                    tier === "free"
-                      ? "Curating your box…"
-                      : "Preparing checkout…"
-                  }
+                  label={tier === "free" ? "Curating your box…" : "Preparing checkout…"}
                 />
               ) : (
                 <>
@@ -278,8 +265,7 @@ export function DiscoverForm() {
                   : config?.paymentEnvironment === "sandbox"
                     ? "PayPal sandbox checkout. No real money is charged."
                     : "Secure checkout with PayPal."}{" "}
-                The box price covers curation; third-party subscriptions cost
-                extra.
+                The box price covers curation; third-party subscriptions cost extra.
               </p>
             )}
             {config?.aiMode === "demo" && (
@@ -294,8 +280,8 @@ export function DiscoverForm() {
         <div className="discovery-footnote">
           <Icon name="shield" size={17} />
           <span>
-            Every box is a set of recommendations. There are no prizes, random
-            payouts, or resale values.
+            Every box is a set of recommendations. There are no prizes, random payouts, or
+            resale values.
           </span>
         </div>
       </div>

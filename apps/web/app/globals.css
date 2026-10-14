@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "../vendor/shadcn/tailwind.css";
 @custom-variant dark (&:is(.dark *));
 
 /* shadcn/ui 的语义 token 保留原有奶油、墨色、橙色视觉；Tailwind utilities 位于组件布局层之后。 */

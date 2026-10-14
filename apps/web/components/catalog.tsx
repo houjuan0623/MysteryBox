@@ -2,12 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
-import {
-  INTERESTS,
-  INTEREST_LABELS,
-  type Tool,
-  type Interest,
-} from "@mysterybox/shared";
+import { INTERESTS, INTEREST_LABELS, type Tool, type Interest } from "@mysterybox/shared";
 import { api, errorMessage } from "@/lib/api";
 import { Icon } from "./icon";
 import { ToolCard } from "./tool-card";
@@ -103,8 +98,8 @@ export function Catalog() {
             ))}
           </div>
           <p className="catalog-disclaimer">
-            Tool information is a starting point, not a live price quote. Check
-            each official website for current pricing, features, and terms.
+            Tool information is a starting point, not a live price quote. Check each
+            official website for current pricing, features, and terms.
           </p>
         </>
       ) : (

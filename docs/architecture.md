@@ -112,3 +112,11 @@ AI_MODE=demo/vercel；付款demo/paypal；邮件demo/resend。任何demo或PayPa
 production要求MongoDB replica-set持久化、独立高熵SESSION_SECRET/PROXY_SHARED_SECRET、HTTPS APP_URL和真实适配器；拒绝demo。Web还要求可信IP头配置与合法请求头，缺失拒绝。sandbox不是实收开启。
 
 当前无目录后台/热更新，无订阅/自动退款/争议管理，无自动执行工作流，无完整过期清理、删除导出。备份、支持、告警、入口与真实供应商必须独立验收。
+
+## 6. 当前追加的受限 MCP 与规格流程
+
+MCP 位于现有 NestJS 内，Streamable HTTP 路径为 /mcp，不是第四个应用。默认 MCP_ENABLED 未设置或为 0 时不注册路由；独立 bearer 鉴权与 scope，不能用 Web cookie/admin 会话代替。仅提供 analytics_summary、draft_create、draft_list；草稿是私有未发布内容，不执行推广、付款、邮件、模型、shell 或任意数据库操作。工具发现与调用均检查 scope，草稿/幂等回执/成功审计一起提交。详见[模块契约](../apps/api/src/mcp/README.md)。
+
+MCP 放在业务通用 JSON/Origin 中间件之前，并自带 16 KiB 解析与 Host/Origin/本地入口校验；这不改变普通 /api 路由的来源防护。默认只允许 loopback，远程启用还需要明确域名、HTTPS 可信入口与独立限流。模块不创建凭据或授权外部客户端，配置和远程接入需另行批准。
+
+实际引入官方 Spec Kit 1.2.0 的 generic 集成、官方脚本/模板及中文规格产物；这是一套工程推进材料，不自动实现业务或创建自动化。当前项目差距保留在 specs/001-three-app-foundation/convergence.md，详见[接入与执行证据](spec-kit.md)。

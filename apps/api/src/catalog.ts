@@ -20,10 +20,7 @@ export const catalog: Tool[] = [
     interests: ["creator"],
     website: "https://www.descript.com/",
     sourceUrl: "https://www.descript.com/",
-    capabilities: [
-      "Transcribe a recording",
-      "Edit audio and video through text",
-    ],
+    capabilities: ["Transcribe a recording", "Edit audio and video through text"],
     caveat:
       "Check transcription and every cut; use recordings and voices only with permission.",
     pricingNote: "Check official pricing; third-party costs are separate.",
@@ -54,8 +51,7 @@ export const catalog: Tool[] = [
     category: "Research & learning",
     interests: ["student", "business"],
     website: "https://notebook.google/",
-    sourceUrl:
-      "https://workspace.google.com/intl/en_sg/products/gemini-notebook/",
+    sourceUrl: "https://workspace.google.com/intl/en_sg/products/gemini-notebook/",
     capabilities: [
       "Ask questions about uploaded sources",
       "Compare findings with source citations",
@@ -162,10 +158,7 @@ export const catalog: Tool[] = [
     interests: ["creator", "developer", "student", "business"],
     website: "https://chatgpt.com/",
     sourceUrl: "https://chatgpt.com/overview/",
-    capabilities: [
-      "Draft and revise text",
-      "Explain concepts and assist with code",
-    ],
+    capabilities: ["Draft and revise text", "Explain concepts and assist with code"],
     caveat:
       "Review factual claims and code; do not submit private data without appropriate permission.",
     pricingNote: "Check official pricing; third-party costs are separate.",
@@ -181,10 +174,7 @@ export const catalog: Tool[] = [
     interests: ["creator", "business"],
     website: "https://www.adobe.com/products/firefly.html",
     sourceUrl: "https://www.adobe.com/products/firefly.html",
-    capabilities: [
-      "Generate visual concepts",
-      "Create prompt-based image assets",
-    ],
+    capabilities: ["Generate visual concepts", "Create prompt-based image assets"],
     caveat:
       "Review the selected model's terms, usage credits, and asset suitability before commercial use.",
     pricingNote: "Check official pricing; third-party costs are separate.",
@@ -235,10 +225,7 @@ export const catalog: Tool[] = [
     interests: ["creator"],
     website: "https://runway.com/",
     sourceUrl: "https://runway.com/",
-    capabilities: [
-      "Generate video concepts",
-      "Develop AI-assisted visual assets",
-    ],
+    capabilities: ["Generate video concepts", "Develop AI-assisted visual assets"],
     caveat:
       "Expect to iterate on motion and consistency; verify rights, consent, and credit costs before use.",
     pricingNote: "Check official pricing; third-party costs are separate.",
@@ -254,10 +241,7 @@ export const catalog: Tool[] = [
     interests: ["developer", "student"],
     website: "https://replit.com/",
     sourceUrl: "https://replit.com/",
-    capabilities: [
-      "Build app prototypes from a brief",
-      "Iterate on application code",
-    ],
+    capabilities: ["Build app prototypes from a brief", "Iterate on application code"],
     caveat:
       "Review generated code and access settings; running or deploying a project can incur additional charges.",
     pricingNote: "Check official pricing; third-party costs are separate.",
@@ -273,10 +257,7 @@ export const catalog: Tool[] = [
     interests: ["creator", "student", "business"],
     website: "https://otter.ai/",
     sourceUrl: "https://otter.ai/",
-    capabilities: [
-      "Transcribe conversations",
-      "Summarize decisions and action items",
-    ],
+    capabilities: ["Transcribe conversations", "Summarize decisions and action items"],
     caveat:
       "Get all required recording consent and review speaker labels and important details before sharing.",
     pricingNote: "Check official pricing; third-party costs are separate.",

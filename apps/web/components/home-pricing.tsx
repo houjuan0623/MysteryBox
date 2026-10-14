@@ -96,11 +96,9 @@ export function HomePricing() {
         </Card>
       </div>
       <p className="pricing-fine">
-        {config?.paymentMode === "demo"
-          ? "Demo checkout only. No actual charge. "
-          : ""}
-        You’re purchasing curation. Third-party tool subscriptions and usage
-        fees are not included.
+        {config?.paymentMode === "demo" ? "Demo checkout only. No actual charge. " : ""}
+        You’re purchasing curation. Third-party tool subscriptions and usage fees are not
+        included.
       </p>
     </section>
   );

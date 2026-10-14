@@ -76,4 +76,4 @@ API_INTERNAL_URL默认指向API4000。PROXY_SHARED_SECRET和TRUSTED_CLIENT_IP_HE
 - 管理代理拒绝未列出的修改路由。
 - 管理端独立build/start、cookie/Origin/代理身份和角色端到端测试。
 
-上述都是当前 Mongo/三应用版的完整验收要求，旧 Web 测试不覆盖新增 Admin。当前已取得 Admin 5 项 UTC 单元、TypeScript、独立生产构建及 1 项实际 Next 代理请求检查结果；五个浏览器 UI 用例被环境 socket 限制阻塞，后端角色/统计集成仍待验证，详见[验收证据](acceptance.md)。
+当前 Admin 5 项单元、独立构建/类型、6 项 UI/代理测试已取得通过结果；其中 UI 使用测试 API fixture，不能代替后端权限验证。真实 Nest/Mongo 已单独验证 member→admin→撤权时同一会话分别返回 403→200→403；全项目门禁仍待最终结果，详见[验收证据](acceptance.md)。

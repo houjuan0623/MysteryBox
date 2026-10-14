@@ -49,7 +49,7 @@ export interface OrderRecord {
   providerOrderId: string;
   approvalUrl?: string;
   paymentStatus: "pending" | "completed";
-  paymentEnvironment: "demo"|"sandbox"|"live";
+  paymentEnvironment: "demo" | "sandbox" | "live";
   paidAt?: string;
   generationStatus: "queued" | "ready" | "failed";
   captureId?: string;
@@ -75,7 +75,13 @@ interface Idempotency {
   resourceId: string;
 }
 interface DeliveryRecord {
-  key: string; boxId: string; email: string; status: "pending"|"failed"|"sent"|"demo"; attempts: number; nextAttemptAt: number; createdAt: string;
+  key: string;
+  boxId: string;
+  email: string;
+  status: "pending" | "failed" | "sent" | "demo";
+  attempts: number;
+  nextAttemptAt: number;
+  createdAt: string;
 }
 interface EventRecord {
   id: string;
@@ -122,10 +128,7 @@ export class MysteryBoxService {
         "catalog_versions",
         "current",
       );
-      if (
-        !version?.version ||
-        new Set(tools.map((t) => t.id)).size !== tools.length
-      )
+      if (!version?.version || new Set(tools.map((t) => t.id)).size !== tools.length)
         throw new Error("Catalog metadata invalid");
       this.catalog = tools;
       this.catalogVersion = version.version;
@@ -170,12 +173,7 @@ export class MysteryBoxService {
         "This request key was already used for different inputs.",
       );
   }
-  async limit(
-    scope: string,
-    subject: string,
-    maximum: number,
-    windowMs: number,
-  ) {
+  async limit(scope: string, subject: string, maximum: number, windowMs: number) {
     const key = `${scope}:${sha(subject)}:${Math.floor(Date.now() / windowMs)}`;
     await this.store.atomic(`limit:${key}`, async (tx) => {
       const record = (await tx.get<{ count: number }>("limits", key)) || {
@@ -193,10 +191,7 @@ export class MysteryBoxService {
   }
   async userFromSession(sessionToken?: string): Promise<User | undefined> {
     if (!sessionToken) return;
-    const session = await this.store.get<Session>(
-      "sessions",
-      sha(sessionToken),
-    );
+    const session = await this.store.get<Session>("sessions", sha(sessionToken));
     if (!session || session.expiresAt < Date.now()) return;
     return this.store.get<User>("users", session.userId);
   }
@@ -244,10 +239,7 @@ export class MysteryBoxService {
       )
         return undefined;
       challenge.attempts++;
-      const valid = safeEqual(
-        challenge.hash,
-        this.token("code", `${id}:${code}`),
-      );
+      const valid = safeEqual(challenge.hash, this.token("code", `${id}:${code}`));
       if (valid) challenge.used = true;
       await tx.put("challenges", id, challenge);
       return valid ? challenge.email : undefined;
@@ -316,9 +308,7 @@ export class MysteryBoxService {
           interest: record.brief.interest,
           tier: record.tier,
           goal: record.brief.goal,
-          tools: this.catalog.filter((t) =>
-            t.interests.includes(record.brief.interest),
-          ),
+          tools: this.catalog.filter((t) => t.interests.includes(record.brief.interest)),
         });
         record.box = {
           ...data,
@@ -346,24 +336,13 @@ export class MysteryBoxService {
   }
   async readBox(id: string, token?: string, user?: User) {
     const record = await this.store.get<BoxRecord>("boxes", id);
-    if (
-      !record ||
-      (!this.owner(record.ownerId, user) && !this.access("box", id, token))
-    )
-      throw new AppError(
-        404,
-        "BOX_NOT_FOUND",
-        "Box not found or access expired.",
-      );
+    if (!record || (!this.owner(record.ownerId, user) && !this.access("box", id, token)))
+      throw new AppError(404, "BOX_NOT_FOUND", "Box not found or access expired.");
     if (!record.box)
       throw new AppError(409, "BOX_NOT_READY", "This box is not ready yet.");
     return record.box;
   }
-  async createOrder(
-    brief: Brief,
-    key: string,
-    user?: User,
-  ): Promise<CheckoutResponse> {
+  async createOrder(brief: Brief, key: string, user?: User): Promise<CheckoutResponse> {
     const hash = sha(JSON.stringify({ brief, user: user?.id || null }));
     const id = await this.store.atomic(`checkout:${key}`, async (tx) => {
       const previous = await tx.get<Idempotency>("order_requests", key);
@@ -378,7 +357,10 @@ export class MysteryBoxService {
         currency: "USD",
         providerOrderId: "",
         paymentStatus: "pending",
-        paymentEnvironment: this.config.paymentMode === "demo" ? "demo" : this.config.paypalMode || "sandbox",
+        paymentEnvironment:
+          this.config.paymentMode === "demo"
+            ? "demo"
+            : this.config.paypalMode || "sandbox",
         generationStatus: "queued",
         boxId: randomUUID(),
         createKey: randomUUID(),
@@ -420,14 +402,9 @@ export class MysteryBoxService {
   ): asserts order is OrderRecord {
     if (
       !order ||
-      (!this.owner(order.ownerId, user) &&
-        !this.access("order", order.id, token))
+      (!this.owner(order.ownerId, user) && !this.access("order", order.id, token))
     )
-      throw new AppError(
-        404,
-        "ORDER_NOT_FOUND",
-        "Order not found or access expired.",
-      );
+      throw new AppError(404, "ORDER_NOT_FOUND", "Order not found or access expired.");
   }
   private async markPaid(tx: Records, order: OrderRecord, captureId: string) {
     if (!captureId)
@@ -437,8 +414,7 @@ export class MysteryBoxService {
     });
     if (
       !claimed &&
-      (await tx.get<{ orderId: string }>("captures", captureId))?.orderId !==
-        order.id
+      (await tx.get<{ orderId: string }>("captures", captureId))?.orderId !== order.id
     )
       throw new AppError(
         409,
@@ -507,18 +483,13 @@ export class MysteryBoxService {
       });
       const emailStatus =
         order.brief.email && order.brief.emailConsent
-          ? await this.sendBoxEmail(
-              order.boxId,
-              order.brief.email,
-              automaticEmail,
-            )
+          ? await this.sendBoxEmail(order.boxId, order.brief.email, automaticEmail)
           : "skipped";
       return { box, accessToken: this.token("box", order.boxId), emailStatus };
     } catch (error) {
       await this.store.atomic(`order:${order.id}`, async (tx) => {
         const current = (await tx.get<OrderRecord>("orders", order.id))!;
-        if (current.generationStatus !== "ready")
-          current.generationStatus = "failed";
+        if (current.generationStatus !== "ready") current.generationStatus = "failed";
         await tx.put("orders", order.id, current);
       });
       throw error;
@@ -592,17 +563,14 @@ export class MysteryBoxService {
         // 失败也必须持久化。已付款访客关闭浏览器后，后台仍可独立重试邮件。
         delivery.status = "failed";
         delivery.nextAttemptAt =
-          Date.now() +
-          Math.min(300000, 2 ** Math.min(delivery.attempts, 8) * 5000);
+          Date.now() + Math.min(300000, 2 ** Math.min(delivery.attempts, 8) * 5000);
         await tx.put("deliveries", key, delivery);
         return "failed";
       }
     });
   }
   async processDeliveries() {
-    const pending = (
-      await this.store.list<DeliveryRecord>("deliveries")
-    ).filter(
+    const pending = (await this.store.list<DeliveryRecord>("deliveries")).filter(
       (d) =>
         (d.status === "failed" || d.status === "pending") &&
         d.attempts < 5 &&
@@ -643,8 +611,7 @@ export class MysteryBoxService {
   }
   async favorites(user: User) {
     return (
-      (await this.store.get<{ toolIds: string[] }>("favorites", user.id))
-        ?.toolIds || []
+      (await this.store.get<{ toolIds: string[] }>("favorites", user.id))?.toolIds || []
     );
   }
   async favorite(user: User, toolId: string, saved: boolean) {
@@ -652,16 +619,20 @@ export class MysteryBoxService {
       throw new AppError(404, "TOOL_NOT_FOUND", "Tool not found.");
     return this.store.atomic(`favorites:${user.id}`, async (tx) => {
       const favorites = new Set(
-        (await tx.get<{ toolIds: string[] }>("favorites", user.id))?.toolIds ||
-          [],
+        (await tx.get<{ toolIds: string[] }>("favorites", user.id))?.toolIds || [],
       );
-      if (saved) favorites.add(toolId); else favorites.delete(toolId);
+      if (saved) favorites.add(toolId);
+      else favorites.delete(toolId);
       const result = { toolIds: [...favorites] };
       await tx.put("favorites", user.id, result);
       return result;
     });
   }
-  async webhook(headers: Record<string, string | undefined>, body: unknown, rawBody?: string) {
+  async webhook(
+    headers: Record<string, string | undefined>,
+    body: unknown,
+    rawBody?: string,
+  ) {
     if (
       this.config.paymentMode !== "paypal" ||
       !(await this.providers.payments.verifyWebhook(headers, body, rawBody))
@@ -679,21 +650,11 @@ export class MysteryBoxService {
       };
     };
     if (!event.id || event.id.length > 200)
-      throw new AppError(
-        400,
-        "INVALID_WEBHOOK",
-        "Webhook event id is missing.",
-      );
-    if (event.event_type !== "PAYMENT.CAPTURE.COMPLETED")
-      return { accepted: true };
-    const providerOrderId =
-      event.resource?.supplementary_data?.related_ids?.order_id;
+      throw new AppError(400, "INVALID_WEBHOOK", "Webhook event id is missing.");
+    if (event.event_type !== "PAYMENT.CAPTURE.COMPLETED") return { accepted: true };
+    const providerOrderId = event.resource?.supplementary_data?.related_ids?.order_id;
     if (!providerOrderId)
-      throw new AppError(
-        400,
-        "INVALID_WEBHOOK",
-        "Webhook order reference is missing.",
-      );
+      throw new AppError(400, "INVALID_WEBHOOK", "Webhook order reference is missing.");
     // 验签后先落库再返回 202；外部邮件/模型绝不能阻塞 PayPal webhook 的确认。
     await this.store.insert<EventRecord>("webhooks", event.id, {
       id: event.id,
@@ -710,36 +671,29 @@ export class MysteryBoxService {
     )) {
       try {
         const orders = await this.store.list<OrderRecord>("orders");
-        const candidate = orders.find(
-          (o) => o.providerOrderId === event.providerOrderId,
-        );
+        const candidate = orders.find((o) => o.providerOrderId === event.providerOrderId);
         if (!candidate) throw new Error("Unknown order");
-        const order = await this.store.atomic(
-          `order:${candidate.id}`,
-          async (tx) => {
-            const order = (await tx.get<OrderRecord>("orders", candidate.id))!;
-            if (order.paymentStatus !== "completed") {
-              const external = await this.providers.payments.inspect({
-                id: order.id,
-                providerOrderId: order.providerOrderId,
-                amountCents: order.amountCents,
-                currency: order.currency,
-              });
-              if (external.status !== "completed")
-                throw new Error("Not completed");
-              await this.markPaid(tx, order, external.captureId);
-            }
-            return order;
-          },
-        );
+        const order = await this.store.atomic(`order:${candidate.id}`, async (tx) => {
+          const order = (await tx.get<OrderRecord>("orders", candidate.id))!;
+          if (order.paymentStatus !== "completed") {
+            const external = await this.providers.payments.inspect({
+              id: order.id,
+              providerOrderId: order.providerOrderId,
+              amountCents: order.amountCents,
+              currency: order.currency,
+            });
+            if (external.status !== "completed") throw new Error("Not completed");
+            await this.markPaid(tx, order, external.captureId);
+          }
+          return order;
+        });
         await this.fulfill(order, true);
         event.status = "done";
         await this.store.put("webhooks", event.id, event);
       } catch {
         event.attempts++;
         event.nextAttemptAt =
-          Date.now() +
-          Math.min(3600000, 2 ** Math.min(event.attempts, 10) * 5000);
+          Date.now() + Math.min(3600000, 2 ** Math.min(event.attempts, 10) * 5000);
         await this.store.put("webhooks", event.id, event);
       }
     }

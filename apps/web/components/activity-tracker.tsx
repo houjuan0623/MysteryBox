@@ -1,11 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import {
-  analyticsPath,
-  analyticsVisitor,
-  subscribeAnalytics,
-} from "@/lib/analytics";
+import { analyticsPath, analyticsVisitor, subscribeAnalytics } from "@/lib/analytics";
 export function ActivityTracker() {
   const pathname = usePathname();
   const lastEvent = useRef<string | null>(null);

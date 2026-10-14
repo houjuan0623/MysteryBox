@@ -1,9 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { isIP } from "node:net";
-import {
-  MAX_REQUEST_BYTES,
-  readLimitedBody,
-} from "@mysterybox/shared/src/body";
+import { MAX_REQUEST_BYTES, readLimitedBody } from "@mysterybox/shared/src/body";
 import { signClientIdentity } from "@mysterybox/shared/src/proxy";
 import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
@@ -132,18 +129,11 @@ async function proxy(
       {
         error: {
           code: "API_UNAVAILABLE",
-          message:
-            "Our discovery service is taking a moment. Please try again shortly.",
+          message: "Our discovery service is taking a moment. Please try again shortly.",
         },
       },
       { status: 503 },
     );
   }
 }
-export {
-  proxy as GET,
-  proxy as POST,
-  proxy as PUT,
-  proxy as DELETE,
-  proxy as PATCH,
-};
+export { proxy as GET, proxy as POST, proxy as PUT, proxy as DELETE, proxy as PATCH };

@@ -60,6 +60,6 @@ Spec Kit 自身提供的开发 MCP 和 bundled workflow 与 MysteryBox 业务 MC
 
 ## 4. 当前结果和诚实边界
 
-Web/Admin/provider 的已有局部单元/构建报告通过；完整 Mongo、核心 API、Admin 后端与 MCP 集成仍未完成。浏览器验证的未运行/受阻也保留。详见 [当前差距](../specs/001-three-app-foundation/convergence.md)。
+本次 Spec Kit 初始化本身不产生应用测试结论。后续已取得新 API/MCP 组件、真实 Mongo 副本集局部集成和浏览器复测证据，最终整仓门禁仍在收尾；最新应用结果以[验收记录](acceptance.md)为准。规格阶段差距另见 [当前差距](../specs/001-three-app-foundation/convergence.md)，其中早期未完成标记须与后续实测逐项核对，不能自动视为通过。
 
 官方前置脚本通过只证明文档/模板结构可用。规格质量清单的勾选只证明需求经过审查，不代表功能验收、真实供应商通过或生产部署成功。早期/最终 Library 快照和 GitHub 发布由相应已授权交付流程另行核对；本接入不自动执行发布。

@@ -55,9 +55,8 @@ export default function Home() {
             <em>possibilities.</em>
           </h1>
           <p className="hero-description">
-            The internet has enough tools. Find the ones that move you forward.
-            Open a curated box of AI tools, ideas, and practical ways to use
-            them.
+            The internet has enough tools. Find the ones that move you forward. Open a
+            curated box of AI tools, ideas, and practical ways to use them.
           </p>
           <div className="hero-actions">
             <Button
@@ -147,24 +146,23 @@ export default function Home() {
               <span className="step-number">01</span>
               <h3>Tell us what you’re exploring.</h3>
               <p>
-                Pick your interest and share a goal. A tiny starting point is
-                all you need.
+                Pick your interest and share a goal. A tiny starting point is all you
+                need.
               </p>
             </article>
             <article>
               <span className="step-number">02</span>
               <h3>Open a box made for that.</h3>
               <p>
-                Discover relevant AI tools with a clear explanation of why each
-                one fits.
+                Discover relevant AI tools with a clear explanation of why each one fits.
               </p>
             </article>
             <article>
               <span className="step-number">03</span>
               <h3>Put your discovery to work.</h3>
               <p>
-                Try a ready-to-copy prompt and a practical next step. Premium
-                connects three tools into a workflow.
+                Try a ready-to-copy prompt and a practical next step. Premium connects
+                three tools into a workflow.
               </p>
             </article>
           </div>
@@ -187,9 +185,7 @@ export default function Home() {
             Let’s explore <Icon name="arrow" />
           </Link>
         </Button>
-        <p>
-          Discovery, not a lottery. Every box contains useful recommendations.
-        </p>
+        <p>Discovery, not a lottery. Every box contains useful recommendations.</p>
       </section>
     </>
   );

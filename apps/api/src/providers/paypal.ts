@@ -50,18 +50,12 @@ function validAssociation(input: OrderAssociation): void {
     input.amountCents < 1 ||
     input.amountCents > 1_000_000
   )
-    throw new ProviderError(
-      "INVALID_PAYMENT",
-      "The payment details are invalid.",
-    );
+    throw new ProviderError("INVALID_PAYMENT", "The payment details are invalid.");
 }
 function validOrder(input: InspectInput): void {
   validAssociation(input);
   if (!identifier.safeParse(input.providerOrderId).success)
-    throw new ProviderError(
-      "INVALID_PAYMENT",
-      "The payment details are invalid.",
-    );
+    throw new ProviderError("INVALID_PAYMENT", "The payment details are invalid.");
 }
 function cents(value: string): number | null {
   if (!/^(?:0|[1-9]\d{0,8})\.\d{2}$/.test(value)) return null;
@@ -73,8 +67,7 @@ function matchesAmount(
   input: OrderAssociation,
 ): boolean {
   return (
-    value.currency_code === input.currency &&
-    cents(value.value) === input.amountCents
+    value.currency_code === input.currency && cents(value.value) === input.amountCents
   );
 }
 /** 完整金额、货币、商户及订单关联全部一致，且单笔 capture 与 order 均 COMPLETED 才能履约。 */
@@ -147,9 +140,7 @@ export class DemoPaymentProvider implements PaymentProvider {
       providerOrderId: `DEMO-${createHash("sha256").update(input.id).digest("hex").slice(0, 24)}`,
     };
   }
-  async capture(
-    input: InspectInput & { captureKey: string },
-  ): Promise<CaptureResult> {
+  async capture(input: InspectInput & { captureKey: string }): Promise<CaptureResult> {
     validOrder(input);
     stableKey(input.captureKey, 108);
     const expected = `DEMO-${createHash("sha256").update(input.id).digest("hex").slice(0, 24)}`;
@@ -183,10 +174,7 @@ export class PayPalProvider implements PaymentProvider {
     private readonly fetchImpl: typeof fetch = fetch,
   ) {
     this.clientId = required(config.paypalClientId, "PayPal client ID");
-    this.clientSecret = required(
-      config.paypalClientSecret,
-      "PayPal client secret",
-    );
+    this.clientSecret = required(config.paypalClientSecret, "PayPal client secret");
     this.merchantId = required(config.paypalMerchantId, "PayPal merchant ID");
     if (config.paypalMode !== "sandbox" && config.paypalMode !== "live")
       throw new ProviderError(
@@ -199,8 +187,7 @@ export class PayPalProvider implements PaymentProvider {
         : "https://api-m.sandbox.paypal.com";
   }
   private async accessToken(): Promise<string> {
-    if (this.token && this.token.expiresAt > Date.now())
-      return this.token.value;
+    if (this.token && this.token.expiresAt > Date.now()) return this.token.value;
     if (this.tokenInFlight) return this.tokenInFlight;
     this.tokenInFlight = (async () => {
       const raw = await requestJson(
@@ -244,11 +231,7 @@ export class PayPalProvider implements PaymentProvider {
       this.tokenInFlight = undefined;
     }
   }
-  private async api(
-    path: string,
-    init: RequestInit,
-    mutation = false,
-  ): Promise<unknown> {
+  private async api(path: string, init: RequestInit, mutation = false): Promise<unknown> {
     const token = await this.accessToken();
     return requestJson(
       `${this.base}${path}`,
@@ -289,8 +272,7 @@ export class PayPalProvider implements PaymentProvider {
             {
               reference_id: input.id,
               custom_id: input.id,
-              description:
-                "MysteryBox premium AI-tool discovery box (one-time purchase)",
+              description: "MysteryBox premium AI-tool discovery box (one-time purchase)",
               amount: {
                 currency_code: input.currency,
                 value: (input.amountCents / 100).toFixed(2),
@@ -309,10 +291,8 @@ export class PayPalProvider implements PaymentProvider {
                         `/checkout/return?order=${encodeURIComponent(input.id)}`,
                         this.config.appUrl,
                       ).href,
-                      cancel_url: new URL(
-                        "/discover?cancelled=1",
-                        this.config.appUrl,
-                      ).href,
+                      cancel_url: new URL("/discover?cancelled=1", this.config.appUrl)
+                        .href,
                     }
                   : {}),
               },
@@ -334,9 +314,7 @@ export class PayPalProvider implements PaymentProvider {
       .safeParse(raw);
     if (
       !parsed.success ||
-      !["CREATED", "PAYER_ACTION_REQUIRED", "APPROVED"].includes(
-        parsed.data.status,
-      )
+      !["CREATED", "PAYER_ACTION_REQUIRED", "APPROVED"].includes(parsed.data.status)
     )
       throw new ProviderError(
         "PAYMENT_INVALID_RESPONSE",
@@ -388,9 +366,7 @@ export class PayPalProvider implements PaymentProvider {
   async inspect(input: InspectInput): Promise<CaptureResult> {
     return (await this.readOrder(input)).result;
   }
-  async capture(
-    input: InspectInput & { captureKey: string },
-  ): Promise<CaptureResult> {
+  async capture(input: InspectInput & { captureKey: string }): Promise<CaptureResult> {
     stableKey(input.captureKey, 108);
     const before = await this.readOrder(input);
     if (before.result.status === "completed" || before.result.captureId)
@@ -412,10 +388,7 @@ export class PayPalProvider implements PaymentProvider {
       },
       true,
     );
-    const association = z
-      .object({ id: identifier })
-      .passthrough()
-      .safeParse(raw);
+    const association = z.object({ id: identifier }).passthrough().safeParse(raw);
     if (!association.success || association.data.id !== input.providerOrderId)
       throw new ProviderError(
         "PAYMENT_MISMATCH",
@@ -452,9 +425,7 @@ export class PayPalProvider implements PaymentProvider {
     ] as const;
     if (
       !this.config.paypalWebhookId ||
-      fields.some(
-        (key) => !normalized[key] || normalized[key]!.length > 4096,
-      ) ||
+      fields.some((key) => !normalized[key] || normalized[key]!.length > 4096) ||
       !body ||
       typeof body !== "object" ||
       Array.isArray(body)
@@ -482,8 +453,7 @@ export class PayPalProvider implements PaymentProvider {
     let eventText = JSON.stringify(body);
     if (rawBody !== undefined) {
       try {
-        if (JSON.stringify(JSON.parse(rawBody)) !== JSON.stringify(body))
-          return false;
+        if (JSON.stringify(JSON.parse(rawBody)) !== JSON.stringify(body)) return false;
         eventText = rawBody;
       } catch {
         return false;
@@ -499,14 +469,8 @@ export class PayPalProvider implements PaymentProvider {
     };
     const raw = await this.api("/v1/notifications/verify-webhook-signature", {
       method: "POST",
-      body:
-        JSON.stringify(envelope).slice(0, -1) +
-        ',"webhook_event":' +
-        eventText +
-        "}",
+      body: JSON.stringify(envelope).slice(0, -1) + ',"webhook_event":' + eventText + "}",
     });
-    return z
-      .object({ verification_status: z.literal("SUCCESS") })
-      .safeParse(raw).success;
+    return z.object({ verification_status: z.literal("SUCCESS") }).safeParse(raw).success;
   }
 }

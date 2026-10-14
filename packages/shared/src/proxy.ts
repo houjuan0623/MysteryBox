@@ -17,19 +17,15 @@ export function verifyClientIdentity(
   secret: string,
   now = Date.now(),
 ): string | undefined {
-  if (
-    !payload ||
-    !signature ||
-    payload.length > 512 ||
-    !/^[a-f0-9]{64}$/.test(signature)
-  )
+  if (!payload || !signature || payload.length > 512 || !/^[a-f0-9]{64}$/.test(signature))
     return;
   const expected = createHmac("sha256", secret).update(payload).digest("hex");
   if (!timingSafeEqual(Buffer.from(expected), Buffer.from(signature))) return;
   try {
-    const value = JSON.parse(
-      Buffer.from(payload, "base64url").toString("utf8"),
-    ) as { subject: unknown; timestamp: unknown };
+    const value = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as {
+      subject: unknown;
+      timestamp: unknown;
+    };
     if (
       typeof value.subject !== "string" ||
       value.subject.length > 200 ||

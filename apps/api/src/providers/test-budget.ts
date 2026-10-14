@@ -102,8 +102,7 @@ const ledgerSchema = z
   })
   .strict();
 export type BudgetLedger = z.infer<typeof ledgerSchema>;
-export const nanoUsdToUsd = (value: number): string =>
-  (value / 1_000_000_000).toFixed(9);
+export const nanoUsdToUsd = (value: number): string => (value / 1_000_000_000).toFixed(9);
 function newLedger(): BudgetLedger {
   return {
     version: 1,
@@ -146,8 +145,7 @@ export class LiveBudgetGuard {
             a.reservedNanoUsd !==
               a.inputUpperBound * INPUT_NANO_USD_PER_TOKEN +
                 MAX_OUTPUT_TOKENS * OUTPUT_NANO_USD_PER_TOKEN ||
-            (a.state !== "succeeded" &&
-              a.chargedNanoUsd !== a.reservedNanoUsd) ||
+            (a.state !== "succeeded" && a.chargedNanoUsd !== a.reservedNanoUsd) ||
             (a.state === "succeeded" &&
               (a.inputTokens === undefined ||
                 a.outputTokens === undefined ||
@@ -233,10 +231,7 @@ export class LiveBudgetGuard {
       reservation =
         inputUpperBound * INPUT_NANO_USD_PER_TOKEN +
         MAX_OUTPUT_TOKENS * OUTPUT_NANO_USD_PER_TOKEN;
-    if (
-      !Number.isSafeInteger(reservation) ||
-      this.ledger.attempts.length >= MAX_ATTEMPTS
-    )
+    if (!Number.isSafeInteger(reservation) || this.ledger.attempts.length >= MAX_ATTEMPTS)
       throw new SmokeGuardError("ATTEMPT_LIMIT");
     if (this.spent() + reservation > MAX_NANO_USD)
       throw new SmokeGuardError("BUDGET_LIMIT");

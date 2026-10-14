@@ -13,15 +13,11 @@ test.beforeEach(async ({ request }) => {
 });
 async function openFreeBox(page: Page) {
   await page.goto("/discover?interest=developer");
-  await expect(
-    page.getByRole("radio", { name: "Developer", exact: true }),
-  ).toBeChecked();
+  await expect(page.getByRole("radio", { name: "Developer", exact: true })).toBeChecked();
   await page
     .getByRole("textbox", { name: /What would you like to do/ })
     .fill("Build a small, useful side project");
-  await page
-    .getByRole("button", { name: "Open my free box", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Open my free box", exact: true }).click();
   await expect(page).toHaveURL(/\/box\/[^/?]+$/);
   await expect(page.locator(".recommendation")).toHaveCount(1);
 }
@@ -51,16 +47,12 @@ test("premium demo needs explicit completion and returns three tools with a work
   page,
 }) => {
   await page.goto("/discover?interest=business&tier=premium");
-  await page
-    .getByRole("button", { name: "Try premium demo", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Try premium demo", exact: true }).click();
   await expect(page).toHaveURL(/\/checkout\/return\?order=/);
   await expect(
     page.getByText("This is a simulated payment.", { exact: true }),
   ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Open demo premium box", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Open demo premium box", exact: true }).click();
   await expect(page).toHaveURL(/\/box\/[^/?]+$/);
   await expect(page.locator(".recommendation")).toHaveCount(3);
   await expect(page.locator(".workflow-steps li").first()).toBeVisible();
@@ -72,12 +64,8 @@ test("demo sign-in claims a browser box and persists a favorite in the collectio
   await page.goto("/account");
   await page
     .getByRole("textbox", { name: "Email address", exact: true })
-    .fill(
-      `ui-${Date.now()}-${Math.random().toString(36).slice(2)}@example.test`,
-    );
-  await page
-    .getByRole("button", { name: "Send sign-in code", exact: true })
-    .click();
+    .fill(`ui-${Date.now()}-${Math.random().toString(36).slice(2)}@example.test`);
+  await page.getByRole("button", { name: "Send sign-in code", exact: true }).click();
   const code = page.locator(".demo-code b");
   await expect(code).toBeVisible();
   await page
@@ -90,9 +78,7 @@ test("demo sign-in claims a browser box and persists a favorite in the collectio
   await expect(page.locator(".history-card")).toHaveCount(1);
   await page.locator(".history-card").first().click();
   await page.getByRole("button", { name: "Save", exact: true }).click();
-  await expect(
-    page.getByRole("button", { name: "Saved", exact: true }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Saved", exact: true })).toBeVisible();
   await page.goto("/account");
   await page.getByRole("tab", { name: /Favorite tools/ }).click();
   await expect(page.locator(".tool-card")).toHaveCount(1);
@@ -120,9 +106,7 @@ test("catalog search has useful empty and reset states", async ({ page }) => {
       exact: true,
     }),
   ).toBeVisible();
-  await page
-    .getByRole("button", { name: "Clear filters", exact: true })
-    .click();
+  await page.getByRole("button", { name: "Clear filters", exact: true }).click();
   await expect(page.locator(".tool-card").first()).toBeVisible();
 });
 test("landing and discovery fit a narrow screen and expose keyboard skip navigation", async ({
@@ -135,32 +119,21 @@ test("landing and discovery fit a narrow screen and expose keyboard skip navigat
     page.getByRole("link", { name: "Skip to content", exact: true }),
   ).toBeFocused();
   expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
   ).toBe(true);
-  await page
-    .getByRole("link", { name: "Find my first box", exact: true })
-    .click();
+  await page.getByRole("link", { name: "Find my first box", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Open my free box", exact: true }),
   ).toBeVisible();
   expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth <= window.innerWidth,
-    ),
+    await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
   ).toBe(true);
 });
 
-test("reduced-motion preference disables decorative page motion", async ({
-  page,
-}) => {
+test("reduced-motion preference disables decorative page motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  await expect(page.locator(".motion-frame")).toHaveCSS(
-    "animation-name",
-    "none",
-  );
+  await expect(page.locator(".motion-frame")).toHaveCSS("animation-name", "none");
   await expect(page.locator(".float-one")).toHaveCSS("animation-name", "none");
   await expect(
     page.getByRole("link", { name: "Find my first box", exact: true }),
@@ -169,43 +142,102 @@ test("reduced-motion preference disables decorative page motion", async ({
 test("a pending box request shows progress and prevents duplicate clicks", async ({
   page,
 }) => {
+  // 请求由断言完成后显式放行，避免用固定毫秒数与页面更新竞争。
+  let releaseRequest!: () => void;
+  let markRequested!: () => void;
+  const requestGate = new Promise<void>((resolve) => {
+    releaseRequest = resolve;
+  });
+  const requestStarted = new Promise<void>((resolve) => {
+    markRequested = resolve;
+  });
+  let requestCount = 0;
   await page.route("**/api/boxes/free", async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 900));
+    requestCount += 1;
+    markRequested();
+    await requestGate;
     await route.continue();
   });
   await page.goto("/discover?interest=student");
-  await page
-    .getByRole("button", { name: "Open my free box", exact: true })
-    .click();
-  await expect(page.locator(".opening-scene")).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Curating your box…", exact: true }),
-  ).toBeDisabled();
+  try {
+    await page.getByRole("button", { name: "Open my free box", exact: true }).click();
+    await requestStarted;
+    await expect(page.locator(".opening-scene")).toBeVisible();
+    const pendingButton = page.getByRole("button", {
+      name: "Curating your box…",
+      exact: true,
+    });
+    await expect(pendingButton).toBeDisabled();
+    await expect(pendingButton).toHaveAttribute("aria-busy", "true");
+    await expect(page.locator(".discovery-form")).toHaveAttribute("aria-busy", "true");
+    await expect(
+      page.getByRole("textbox", { name: /What would you like to do/ }),
+    ).toBeDisabled();
+    await page.keyboard.press("Enter");
+    expect(requestCount).toBe(1);
+  } finally {
+    releaseRequest();
+  }
   await expect(page).toHaveURL(/\/box\/[^/?]+$/);
   await expect(page.locator(".recommendation")).toHaveCount(1);
+  expect(requestCount).toBe(1);
 });
-test("analytics can be disabled without affecting discovery", async ({
-  page,
-}) => {
+test("analytics can be disabled without affecting discovery", async ({ page }) => {
   await page.goto("/privacy");
   const preference = page.getByRole("checkbox", {
     name: "Allow first-party usage analytics for this browser",
     exact: true,
   });
-  if (await preference.isChecked()) await preference.uncheck();
+  // 先确认真实浏览器偏好已经读入，再明确退出；不把 SSR 的占位状态当成已退出。
+  await expect(preference).toBeEnabled();
+  await expect(preference).toBeChecked();
+  await preference.uncheck();
+  await expect(preference).not.toBeChecked();
   await expect(
     page.getByText(
       "Analytics is off. Your box, sign-in, and checkout features still work.",
       { exact: true },
     ),
   ).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("mysterybox:analytics"))).toBe(
+    "off",
+  );
+  expect(
+    await page.evaluate(() => sessionStorage.getItem("mysterybox:analytics-visitor")),
+  ).toBeNull();
+
+  const leakedHeaders: string[] = [];
+  const activityRequests: string[] = [];
+  await page.route("**/api/**", async (route) => {
+    const request = route.request();
+    if (request.headers()["x-analytics-visitor"]) leakedHeaders.push(request.url());
+    if (new URL(request.url()).pathname === "/api/activity")
+      activityRequests.push(request.url());
+    await route.continue();
+  });
   await page.goto("/discover");
   await expect(
     page.getByRole("button", { name: "Open my free box", exact: true }),
-  ).toBeVisible();
+  ).toBeEnabled();
+  await expect(page.locator(".tool-card").first()).toBeVisible();
   expect(
-    await page.evaluate(() =>
-      sessionStorage.getItem("mysterybox:analytics-visitor"),
-    ),
+    await page.evaluate(() => sessionStorage.getItem("mysterybox:analytics-visitor")),
   ).toBeNull();
+  expect(leakedHeaders).toEqual([]);
+  expect(activityRequests).toEqual([]);
+
+  await page.goto("/privacy");
+  await expect(preference).toBeEnabled();
+  await expect(preference).not.toBeChecked();
+  await expect(
+    page.getByText(
+      "Analytics is off. Your box, sign-in, and checkout features still work.",
+      { exact: true },
+    ),
+  ).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem("mysterybox:analytics"))).toBe(
+    "off",
+  );
+  expect(leakedHeaders).toEqual([]);
+  expect(activityRequests).toEqual([]);
 });

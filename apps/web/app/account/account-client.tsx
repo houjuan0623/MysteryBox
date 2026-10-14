@@ -4,12 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import {
-  INTEREST_LABELS,
-  type Box,
-  type Tool,
-  type User,
-} from "@mysterybox/shared";
+import { INTEREST_LABELS, type Box, type Tool, type User } from "@mysterybox/shared";
 import { api, boxTokens, clearRequestKey, errorMessage } from "@/lib/api";
 import { Icon } from "@/components/icon";
 import { ErrorNotice, PageLoading, Spinner } from "@/components/shell";
@@ -164,9 +159,7 @@ export function AccountClient() {
             <br />
             <em>little discoveries.</em>
           </h1>
-          <p>
-            Your boxes, favorite tools, and next good ideas. All in one place.
-          </p>
+          <p>Your boxes, favorite tools, and next good ideas. All in one place.</p>
           <div className="signin-mini-box">
             <Icon name="box" size={58} />
             <span>
@@ -317,8 +310,7 @@ export function AccountClient() {
         role="tablist"
         aria-label="Your collection"
         onKeyDown={(event) => {
-          if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key))
-            return;
+          if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
           event.preventDefault();
           const nextTab =
             event.key === "Home"
@@ -370,11 +362,7 @@ export function AccountClient() {
           boxes.length ? (
             <div className="history-grid">
               {boxes.map((box) => (
-                <Link
-                  className="history-card"
-                  href={`/box/${box.id}`}
-                  key={box.id}
-                >
+                <Link className="history-card" href={`/box/${box.id}`} key={box.id}>
                   <div className="history-card-top">
                     <span
                       className={`note-icon ${box.tier === "premium" ? "orange" : "peach"}`}
@@ -383,9 +371,7 @@ export function AccountClient() {
                     </span>
                     <span className="history-tier">{box.tier}</span>
                   </div>
-                  <span className="eyebrow">
-                    {INTEREST_LABELS[box.interest]}
-                  </span>
+                  <span className="eyebrow">{INTEREST_LABELS[box.interest]}</span>
                   <h2>{box.title}</h2>
                   <p>{box.summary}</p>
                   <div className="history-bottom">

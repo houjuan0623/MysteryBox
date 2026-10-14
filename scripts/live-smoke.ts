@@ -40,9 +40,7 @@ function safeCode(error: unknown): string {
   if (error instanceof SmokeGuardError) return error.code;
   if (error instanceof assert.AssertionError) return "ASSERTION_FAILED";
   const code =
-    typeof error === "object" && error && "code" in error
-      ? error.code
-      : undefined;
+    typeof error === "object" && error && "code" in error ? error.code : undefined;
   return typeof code === "string" &&
     /^(?:GENERATION_FAILED|PAYMENT_PENDING|PAYMENT_MODE|INVALID_CODE|BOX_NOT_FOUND|ORDER_NOT_FOUND|EMAIL_UNAVAILABLE)$/.test(
       code,
@@ -59,8 +57,7 @@ async function run(): Promise<void> {
     return;
   }
   const key = process.env.AI_GATEWAY_API_KEY;
-  if (!key?.trim())
-    throw new SmokeGuardError("CREDENTIAL_MISSING_NO_NETWORK_REQUESTS");
+  if (!key?.trim()) throw new SmokeGuardError("CREDENTIAL_MISSING_NO_NETWORK_REQUESTS");
   delete process.env.AI_GATEWAY_API_KEY;
   const root = path.resolve(__dirname, ".."),
     startedAt = new Date().toISOString(),
@@ -91,11 +88,7 @@ async function run(): Promise<void> {
     timeoutMs: 45_000,
   };
   const store = new MemoryStore(),
-    service = new MysteryBoxService(
-      config,
-      store,
-      createProviders(config, guard.fetch),
-    );
+    service = new MysteryBoxService(config, store, createProviders(config, guard.fetch));
   let failed = false,
     completedBoxes = 0;
   const record = async (name: string, action: () => Promise<void>) => {
@@ -113,10 +106,7 @@ async function run(): Promise<void> {
     const login = async (email: string) => {
       const challenge = await service.requestCode(email);
       assert.ok(challenge.developmentCode);
-      return service.verifyCode(
-        challenge.challengeId,
-        challenge.developmentCode,
-      );
+      return service.verifyCode(challenge.challengeId, challenge.developmentCode);
     };
     const a = await login("synthetic-a@example.com"),
       b = await login("synthetic-b@example.com");
@@ -141,18 +131,10 @@ async function run(): Promise<void> {
             result = await service.free(brief, idempotencyKey, a.user);
             repeat = () => service.free(brief, idempotencyKey, a.user);
           } else {
-            const checkout = await service.createOrder(
-              brief,
-              idempotencyKey,
-              a.user,
-            );
+            const checkout = await service.createOrder(brief, idempotencyKey, a.user);
             assert.equal(checkout.demo, true);
             assert.match(checkout.paypalOrderId, /^DEMO-/);
-            const same = await service.createOrder(
-              brief,
-              idempotencyKey,
-              a.user,
-            );
+            const same = await service.createOrder(brief, idempotencyKey, a.user);
             assert.equal(same.orderId, checkout.orderId);
             result = await service.captureOrder(
               checkout.orderId,
@@ -161,12 +143,7 @@ async function run(): Promise<void> {
               true,
             );
             repeat = () =>
-              service.captureOrder(
-                checkout.orderId,
-                checkout.accessToken,
-                a.user,
-                true,
-              );
+              service.captureOrder(checkout.orderId, checkout.accessToken, a.user, true);
           }
           assert.equal(guard.snapshot().attempts.length, before + 1);
           assert.equal(result.box.generationMode, "vercel");

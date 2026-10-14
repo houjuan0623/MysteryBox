@@ -1,0 +1,12 @@
+{
+  "package": "shadcn",
+  "version": "4.21.4",
+  "export": "shadcn/tailwind.css",
+  "packagePath": "dist/tailwind.css",
+  "source": "https://www.npmjs.com/package/shadcn/v/4.21.4",
+  "license": "MIT",
+  "licenseFile": "LICENSE.md",
+  "sha256": "4c371f7a1ff5d219ae2f7ff28bd256b4346fd546fe46fbae22092e57db2f0fae",
+  "copiedOn": "2026-10-14",
+  "modifications": []
+}

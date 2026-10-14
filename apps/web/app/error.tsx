@@ -7,8 +7,7 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
       <Icon name="box" size={42} />
       <h1>Let’s give that another try.</h1>
       <p>
-        This page couldn’t load. Your saved discoveries are still worth coming
-        back to.
+        This page couldn’t load. Your saved discoveries are still worth coming back to.
       </p>
       <Button
         variant="ghost"

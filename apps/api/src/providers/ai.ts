@@ -17,9 +17,7 @@ const plain = (min: number, max: number) =>
     .max(max)
     .refine(
       (value) =>
-        !/(?:https?:\/\/|www\.|\[[^\]]*\]\s*\(|(?:javascript|data):)/i.test(
-          value,
-        ),
+        !/(?:https?:\/\/|www\.|\[[^\]]*\]\s*\(|(?:javascript|data):)/i.test(value),
       "URLs are not allowed in generated text.",
     );
 const recommendationSchema = z
@@ -140,9 +138,7 @@ export class DemoAiProvider implements AiProvider {
       workflow: [
         ...selected.map((tool, index) => ({
           title:
-            index === 0
-              ? "Start with a small brief"
-              : `Build on it with ${tool.name}`,
+            index === 0 ? "Start with a small brief" : `Build on it with ${tool.name}`,
           description:
             index === 0
               ? `Manually choose one example, remove private information, and try the recommended activity in ${tool.name}.`
@@ -193,18 +189,11 @@ class ResponsesAiProvider implements AiProvider {
         "CATALOG_TOO_SMALL",
         "There are not enough tools in the catalog for this box.",
       );
-    const ids = [...new Set(input.tools.map((t) => t.id))] as [
-      string,
-      ...string[],
-    ];
+    const ids = [...new Set(input.tools.map((t) => t.id))] as [string, ...string[]];
     const constrained = outputSchema.extend({
-      tools: z
-        .array(recommendationSchema.extend({ toolId: z.enum(ids) }))
-        .length(count),
+      tools: z.array(recommendationSchema.extend({ toolId: z.enum(ids) })).length(count),
       workflow: z
-        .array(
-          outputSchema.shape.workflow.element.extend({ toolId: z.enum(ids) }),
-        )
+        .array(outputSchema.shape.workflow.element.extend({ toolId: z.enum(ids) }))
         .min(2)
         .max(6),
     });
@@ -222,15 +211,7 @@ class ResponsesAiProvider implements AiProvider {
         goal: input.goal,
         tier: input.tier,
         catalog: input.tools.map(
-          ({
-            id,
-            name,
-            tagline,
-            category,
-            capabilities,
-            caveat,
-            pricingNote,
-          }) => ({
+          ({ id, name, tagline, category, capabilities, caveat, pricingNote }) => ({
             id,
             name,
             tagline,
@@ -290,11 +271,7 @@ class ResponsesAiProvider implements AiProvider {
       })
       .passthrough()
       .safeParse(raw);
-    if (
-      !envelope.success ||
-      envelope.data.status !== "completed" ||
-      envelope.data.error
-    )
+    if (!envelope.success || envelope.data.status !== "completed" || envelope.data.error)
       throw new ProviderError(
         "AI_INCOMPLETE",
         "AI generation did not finish. Please try again.",

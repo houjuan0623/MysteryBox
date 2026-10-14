@@ -24,16 +24,13 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
   const production = env.NODE_ENV === "production";
   const mode = (name: string, allowed: string[], fallback: string) => {
     const value = env[name] || fallback;
-    if (!allowed.includes(value))
-      throw new Error(`${name} has an unsupported value`);
+    if (!allowed.includes(value)) throw new Error(`${name} has an unsupported value`);
     return value;
   };
-  const aiMode = mode("AI_MODE", ["demo", "vercel"], "demo") as
-    "demo" | "vercel";
+  const aiMode = mode("AI_MODE", ["demo", "vercel"], "demo") as "demo" | "vercel";
   const paymentMode = mode("PAYMENT_MODE", ["demo", "paypal"], "demo") as
     "demo" | "paypal";
-  const emailMode = mode("EMAIL_MODE", ["demo", "resend"], "demo") as
-    "demo" | "resend";
+  const emailMode = mode("EMAIL_MODE", ["demo", "resend"], "demo") as "demo" | "resend";
   const price = Number(env.PREMIUM_PRICE_CENTS || 299);
   if (!Number.isInteger(price) || price < 99 || price > 49900)
     throw new Error("PREMIUM_PRICE_CENTS must be 99–49900 integer cents");
@@ -42,16 +39,16 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
     throw new Error("FREE_DAILY_LIMIT must be a positive integer up to 10000");
   const appUrl = env.APP_URL || "http://localhost:3000";
   const parsed = new URL(appUrl);
-  if (
-    !["http:", "https:"].includes(parsed.protocol) ||
-    parsed.origin !== appUrl
-  )
-    throw new Error(
-      "APP_URL must be an exact http(s) origin without trailing slash",
-    );
+  if (!["http:", "https:"].includes(parsed.protocol) || parsed.origin !== appUrl)
+    throw new Error("APP_URL must be an exact http(s) origin without trailing slash");
   const adminAppUrl = env.ADMIN_APP_URL || "http://localhost:3001";
   const adminOrigin = new URL(adminAppUrl);
-  if(adminOrigin.origin !== adminAppUrl || !["http:","https:"].includes(adminOrigin.protocol) || (production && adminOrigin.protocol !== "https:")) throw new Error("ADMIN_APP_URL must be an exact allowed origin");
+  if (
+    adminOrigin.origin !== adminAppUrl ||
+    !["http:", "https:"].includes(adminOrigin.protocol) ||
+    (production && adminOrigin.protocol !== "https:")
+  )
+    throw new Error("ADMIN_APP_URL must be an exact allowed origin");
   const required = (name: string) => {
     if (!env[name]) throw new Error(`${name} is required`);
   };
@@ -69,8 +66,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
       required(name);
   if (emailMode === "resend")
     for (const name of ["RESEND_API_KEY", "RESEND_FROM"]) required(name);
-  const proxySecret =
-    env.PROXY_SHARED_SECRET || "local-demo-proxy-secret-never-deploy";
+  const proxySecret = env.PROXY_SHARED_SECRET || "local-demo-proxy-secret-never-deploy";
   const sessionSecret =
     env.SESSION_SECRET || "local-demo-only-never-use-in-production-2026";
   if (production) {
@@ -82,13 +78,9 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
     ])
       required(name);
     if (proxySecret.length < 32 || proxySecret.startsWith("local-demo"))
-      throw new Error(
-        "PROXY_SHARED_SECRET must be a unique 32+ character value",
-      );
+      throw new Error("PROXY_SHARED_SECRET must be a unique 32+ character value");
     if (sessionSecret.length < 32 || sessionSecret.startsWith("local-demo"))
-      throw new Error(
-        "A unique SESSION_SECRET of at least 32 characters is required",
-      );
+      throw new Error("A unique SESSION_SECRET of at least 32 characters is required");
     if (
       parsed.protocol !== "https:" ||
       aiMode === "demo" ||
@@ -118,8 +110,7 @@ export function readConfig(env: NodeJS.ProcessEnv = process.env): Config {
     gatewayModel: env.AI_GATEWAY_MODEL,
     paypalClientId: env.PAYPAL_CLIENT_ID,
     paypalClientSecret: env.PAYPAL_CLIENT_SECRET,
-    paypalMode: mode("PAYPAL_MODE", ["sandbox", "live"], "sandbox") as
-      "sandbox" | "live",
+    paypalMode: mode("PAYPAL_MODE", ["sandbox", "live"], "sandbox") as "sandbox" | "live",
     paypalMerchantId: env.PAYPAL_MERCHANT_ID,
     paypalWebhookId: env.PAYPAL_WEBHOOK_ID,
     resendApiKey: env.RESEND_API_KEY,

@@ -32,9 +32,7 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="m16 10 5-3v10l-5-3" />
     </>
   ),
-  book: (
-    <path d="M12 5v16M3 4c4-1 7 0 9 2 2-2 5-3 9-2v15c-4-1-7 0-9 2-2-2-5-3-9-2V4Z" />
-  ),
+  book: <path d="M12 5v16M3 4c4-1 7 0 9 2 2-2 5-3 9-2v15c-4-1-7 0-9 2-2-2-5-3-9-2V4Z" />,
   briefcase: (
     <>
       <rect x="3" y="7" width="18" height="14" rx="3" />

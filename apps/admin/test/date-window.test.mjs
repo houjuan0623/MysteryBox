@@ -1,10 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {
-  defaultWindow,
-  windowQuery,
-  formatTimestamp,
-} from "../lib/date-window.mjs";
+import { defaultWindow, windowQuery, formatTimestamp } from "../lib/date-window.mjs";
 
 test("default window is seven UTC calendar days across month boundaries", () => {
   assert.deepEqual(defaultWindow(new Date("2026-03-02T23:30:00-08:00")), {
@@ -35,8 +31,6 @@ test("missing and invalid timestamps do not invent sign-in activity", () => {
 });
 
 test("exactly 31 days is accepted, 32 days is rejected", () => {
-  assert.doesNotThrow(() =>
-    windowQuery({ from: "2026-10-01", to: "2026-10-31" }),
-  );
+  assert.doesNotThrow(() => windowQuery({ from: "2026-10-01", to: "2026-10-31" }));
   assert.throws(() => windowQuery({ from: "2026-10-01", to: "2026-11-01" }));
 });

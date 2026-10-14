@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-14T07:53:25.154329+00:00",
+  "checkedAt": "2026-10-14T08:07:55.168398+00:00",
   "scope": "Static documentation/catalog check only. Separate component evidence now includes scoped actual Mongo replica-set test; this manifest is not a complete app verification.",
   "sourcePlan": {
     "bytes": 6729,
@@ -46,8 +46,8 @@
     },
     {
       "path": "docs/admin.md",
-      "bytes": 6678,
-      "sha256": "5fbbc65cf236db0d7f56c3161e292e15ec0b66e7d7f20b9be94ceca8914d2d29"
+      "bytes": 7193,
+      "sha256": "cf2f38eaf6a0a018df577e5a45299e603ba8ef4d963c01b3577534429bed81f9"
     },
     {
       "path": "docs/adr-latest-stack.md",
@@ -56,8 +56,8 @@
     },
     {
       "path": "docs/api.md",
-      "bytes": 10218,
-      "sha256": "b9f4e286eade7534261af791cb2dd218d760a3137ef4f180a864becf5fe470b7"
+      "bytes": 10325,
+      "sha256": "9ff192686668a86c183feb7d0c296bd273454b1436d97bbbb61ef75f222151ba"
     },
     {
       "path": "docs/architecture.md",
@@ -71,18 +71,18 @@
     },
     {
       "path": "docs/changelog.md",
-      "bytes": 2058,
-      "sha256": "c3087836c5ac35ef2f3f9cd3ea1a9f8833435bda302240110b5a929f68c87057"
+      "bytes": 2172,
+      "sha256": "90691161a18d957bcca02736b026a1b721420f7e1b8c1ac9c255ee4ad83d3f73"
     },
     {
       "path": "docs/data-model.md",
-      "bytes": 7169,
-      "sha256": "23818478011467c1fb3825083db41497421add8512023cd84a732b398d0019c8"
+      "bytes": 7750,
+      "sha256": "479fa9ea81256e4be100a187a97f69506b4506671146e080b7abd8f79fbfe8ec"
     },
     {
       "path": "docs/prd.md",
-      "bytes": 8433,
-      "sha256": "6c36eb0215e30430797d362699cd0d7b5a1070ac5be26cb8d9c8d75a0eddf1da"
+      "bytes": 8560,
+      "sha256": "00c2e25d2ca0ab0ca4387ce8225fd1340445af18fa12b96d4f55ea539ebe234d"
     },
     {
       "path": "docs/qa/admin-proxy-verification.log",
@@ -136,8 +136,8 @@
     },
     {
       "path": "docs/security.md",
-      "bytes": 6323,
-      "sha256": "604d334d47ae414a1f42a429f1c5a510da25f7b764d52fb31af14988908ec08a"
+      "bytes": 6639,
+      "sha256": "feaf46a877bb367ec0d9f166941ae8345e5cd3a011d7c6856be5a9302c1cf9b8"
     },
     {
       "path": "docs/source-plan.md",
@@ -145,10 +145,16 @@
       "sha256": "b2cd871409b4099d5f521c5e7b9875317fc139c966d033f15789581871738180"
     },
     {
+      "path": "docs/spec-kit.md",
+      "bytes": 6714,
+      "sha256": "1a8595fb99302c97bccdb147743c69a91e5ace51411c4b7928140cff56be7060"
+    },
+    {
       "path": "apps/api/src/catalog.ts",
-      "bytes": 12209,
-      "sha256": "27de7c017931bfa47deef79dd41cf1235329d21b5e3de99e273b0b06c5f2282f"
+      "bytes": 12089,
+      "sha256": "64e8d6416c1ccf30caf449bf7c814624f30a33e01bffc48e932ff0656e609a6c"
     }
   ],
-  "componentEvidence": "docs/qa/component-verification.json; new Web/Admin/API component and actual Mongo results with explicit limits"
+  "componentEvidence": "docs/qa/component-verification.json; new Web/Admin/API component and actual Mongo results with explicit limits",
+  "analyticsContract": "Required durable order/box/user counts separated from optional anonymous browsing events; pending final integrated rerun"
 }

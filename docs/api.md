@@ -2,7 +2,7 @@
 
 > 恢复版（2026-10-14）：根据旧任务正文与修订重建。下述代码/接口为恢复目标，需对照新工程验证。历史通过记录不等于当前恢复目录通过。
 
-业务HTTP契约从原0.1.0设计恢复，底层数据库现改为MongoDB。Next.js Web、Next.js Admin和NestJS API独立运行/构建/部署；接口均由NestJS提供，Next同源代理只是浏览器入口。所有路径含/api，最终枚举/字段以恢复后main.ts、domain.ts和共享契约为准。
+业务HTTP契约从原0.1.0设计恢复，底层数据库现改为MongoDB。Next.js Web、Next.js Admin和NestJS API独立运行/构建/部署；接口均由NestJS提供，Next同源代理只是浏览器入口。业务 REST 路径均以 /api 开头；当前新增的独立 MCP 协议入口为 /mcp，使用独立认证和校验，不是本节 REST 会话接口。最终枚举/字段以 main.ts、domain.ts 和共享契约为准。
 
 ## 共同约定
 
@@ -112,3 +112,7 @@ challengeId为UUID，码6位，有效10分钟，最多5次尝试，成功不可�
 ## 拒绝路径
 
 无/错Origin、额外金额字段、同key改输入、无凭证读Box、跨账号访问、无效/重放验证码、未知收藏工具、无效webhook、错商户/金额/币种、重复capture、模型未知ID均不得误报成功。错误不泄漏上游原文、密钥、验证码或完整个人数据。
+
+## MCP 协议入口
+
+/mcp 是现有 Nest 内的可选 Streamable HTTP 入口，默认关闭，不接受网站会话 cookie。支持的 scope 为 analytics:read、drafts:read、drafts:write；仅汇总统计和私有未发布草稿，不能导出用户邮箱或发起外部动作。配置、幂等、审计与验证范围以[模块说明](../apps/api/src/mcp/README.md)为准。此处不提供可直接使用的访问凭据，不授权配置持续访问或远程发布。

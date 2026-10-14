@@ -23,9 +23,7 @@ export function escapeHtml(value: string): string {
   return plain(value).replace(
     /[&<>"']/g,
     (char) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        char
-      ]!,
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!,
   );
 }
 function catalogUrl(value: string): string {
@@ -33,16 +31,10 @@ function catalogUrl(value: string): string {
   try {
     url = new URL(value);
   } catch {
-    throw new ProviderError(
-      "INVALID_CATALOG_URL",
-      "A tool link could not be validated.",
-    );
+    throw new ProviderError("INVALID_CATALOG_URL", "A tool link could not be validated.");
   }
   if (url.protocol !== "https:" || url.username || url.password)
-    throw new ProviderError(
-      "INVALID_CATALOG_URL",
-      "A tool link could not be validated.",
-    );
+    throw new ProviderError("INVALID_CATALOG_URL", "A tool link could not be validated.");
   return url.href;
 }
 /** HTML 和纯文本并行提供；动态内容转义，链接仅来自受维护目录。 */
@@ -92,8 +84,7 @@ export class ResendEmailProvider implements EmailProvider {
   ) {
     this.key = required(config.resendApiKey, "Resend API key");
     this.from = required(config.resendFrom, "Resend sender address");
-    const address =
-      this.from.match(/^[^<>\r\n]+<([^<>\r\n]+)>$/)?.[1] ?? this.from;
+    const address = this.from.match(/^[^<>\r\n]+<([^<>\r\n]+)>$/)?.[1] ?? this.from;
     if (/[\r\n]/.test(this.from) || !emailSchema.safeParse(address).success)
       throw new ProviderError(
         "PROVIDER_NOT_CONFIGURED",

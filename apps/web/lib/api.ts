@@ -1,9 +1,5 @@
 import { analyticsVisitor } from "./analytics";
-import type {
-  BoxResponse,
-  CheckoutResponse,
-  PublicConfig,
-} from "@mysterybox/shared";
+import type { BoxResponse, CheckoutResponse, PublicConfig } from "@mysterybox/shared";
 export class RequestError extends Error {
   constructor(
     message: string,
@@ -13,10 +9,7 @@ export class RequestError extends Error {
     super(message);
   }
 }
-export async function api<T>(
-  path: string,
-  options: RequestInit = {},
-): Promise<T> {
+export async function api<T>(path: string, options: RequestInit = {}): Promise<T> {
   const visitor = analyticsVisitor();
   const response = await fetch(`/api${path}`, {
     ...options,
@@ -31,8 +24,7 @@ export async function api<T>(
   const data = await response.json().catch(() => null);
   if (!response.ok)
     throw new RequestError(
-      data?.error?.message ||
-        "We couldn’t complete that request. Please try again.",
+      data?.error?.message || "We couldn’t complete that request. Please try again.",
       response.status,
       data?.error?.code,
     );
@@ -51,9 +43,7 @@ export const catalogDate = (value: string) =>
     timeZone: "UTC",
   });
 export const errorMessage = (error: unknown) =>
-  error instanceof Error
-    ? error.message
-    : "Something went wrong. Please try again.";
+  error instanceof Error ? error.message : "Something went wrong. Please try again.";
 const readStorage = <T>(key: string, fallback: T): T => {
   try {
     return JSON.parse(sessionStorage.getItem(key) || "null") ?? fallback;
@@ -73,19 +63,13 @@ export function orderRecord(id: string): CheckoutResponse | null {
   return readStorage(`mysterybox:order:${id}`, null);
 }
 export function saveOrder(order: CheckoutResponse) {
-  sessionStorage.setItem(
-    `mysterybox:order:${order.orderId}`,
-    JSON.stringify(order),
-  );
+  sessionStorage.setItem(`mysterybox:order:${order.orderId}`, JSON.stringify(order));
 }
 // 同一个请求在网络失败后保留原幂等键，避免重试产生重复盒子或订单。内容改变才创建新键。
 export function requestKey(kind: string, payload: unknown): string {
   const key = `mysterybox:request:${kind}`;
   const fingerprint = JSON.stringify(payload);
-  const previous = readStorage<{ fingerprint: string; id: string } | null>(
-    key,
-    null,
-  );
+  const previous = readStorage<{ fingerprint: string; id: string } | null>(key, null);
   if (previous?.fingerprint === fingerprint) return previous.id;
   const id = crypto.randomUUID();
   sessionStorage.setItem(key, JSON.stringify({ fingerprint, id }));

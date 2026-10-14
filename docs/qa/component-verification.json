@@ -1,22 +1,28 @@
 {
-  "recordedAt": "2026-10-14T07:52:57.328503+00:00",
+  "recordedAt": "2026-10-14T08:11:48.511234+00:00",
   "scope": "New restoration scoped component and actual Mongo replica-set checks; not complete quality gate/HTTP/browser/provider verification.",
   "web": {
-    "reportedAtApprox": "2026-10-14T07:13:00Z",
-    "command": "npm run typecheck -w @mysterybox/web && npm run test -w @mysterybox/web && npm run build -w @mysterybox/web",
     "exitCode": 0,
     "tests": {
-      "passed": 12,
+      "passed": 17,
       "failed": 0,
-      "skipped": 0
+      "skipped": 0,
+      "evidence": "Core implementation report; latest privacy tests included"
     },
     "typecheck": "passed",
-    "build": "Next.js 16.4.0 production passed; static generation 9/9",
+    "build": "Initial Next.js16.4 production build passed; latest full build after dependency cleanup pending",
     "evidenceType": "Implementation-task report of retained tool output; no original stdout file saved",
     "browserCases": {
-      "authored": 8,
-      "execution": "not run on replacement host"
-    }
+      "passed": 8,
+      "failed": 0,
+      "log": "docs/qa/web-browser-verification.log",
+      "scope": "Real Chromium against local all-demo app; pending-request case uses interception",
+      "revisionBoundary": "Before removing unused shadcn CLI and byte-identical MIT CSS relocation; not a post-lockfile browser rerun"
+    },
+    "initialReportedAtApprox": "2026-10-14T07:13:00Z",
+    "latestReportedAtApprox": "2026-10-14T08:11:00Z",
+    "initialCommand": "npm run typecheck -w @mysterybox/web && npm run test -w @mysterybox/web && npm run build -w @mysterybox/web",
+    "latestTypecheckAndUnitEvidence": "Frontend implementation report: fresh typecheck +17 unit tests and scoped ESLint passed; full build after removing unused CLI pending"
   },
   "admin": {
     "reportedAt": "2026-10-14T07:20:00Z",
@@ -39,8 +45,11 @@
     "typecheck": "passed with copied log",
     "build": "Implementation-task report: independent Next16.4 production build passed; original stdout not saved",
     "browserCases": {
-      "authored": 5,
-      "execution": "blocked at Chromium startup by environment socket restriction, before assertions"
+      "passed": 6,
+      "failed": 0,
+      "log": "docs/qa/admin-browser-verification.log",
+      "scope": "5 browser UI cases with test API fixtures, 1 real Next proxy HTTP case",
+      "reportedAtApprox": "2026-10-14T08:10:00Z"
     },
     "logsSha256": {
       "admin-unit-verification.log": "0a7215b7931e40b54d64b68d09bbf6d076cc937573dea71ef20a81cea364269d",
@@ -48,22 +57,26 @@
     }
   },
   "notCovered": [
-    "Full Nest HTTP authentication/role/analytics integration",
-    "Full quality gate after all changes",
-    "Browser flows on replacement host",
+    "Final all-workspace quality gate after dependency cleanup",
+    "Actual role CLI grant in production",
+    "CI run in deployment environment",
     "Real AI/payment/email providers",
     "Public production deployment"
   ],
   "api": {
-    "reportedAtApprox": "2026-10-14T07:49:00Z",
-    "domainSecurityTests": 17,
-    "providerMockTests": 33,
-    "evidenceType": "Core implementation report; no raw grouped stdout yet provided",
-    "fullQualityGate": "pending",
-    "fullHttpIntegration": "pending"
+    "tests": {
+      "passed": 65,
+      "failed": 0,
+      "skipped": 0
+    },
+    "includesMcpTests": 13,
+    "separateMongoTestNotIncluded": true,
+    "log": "docs/qa/api-component-verification.log",
+    "providers": "mock/demo only",
+    "fullQualityGate": "pending dependency cleanup and complete rerun"
   },
   "mongo": {
-    "reportedAtApprox": "2026-10-14T07:49:00Z",
+    "reportedAtApprox": "2026-10-14T08:05:00Z",
     "engine": "Actual mongod 8.0.17 single-node replica set via mongodb-memory-server",
     "testFile": "apps/api/test/mongo.test.ts",
     "exitCode": 0,
@@ -71,21 +84,31 @@
     "failed": 0,
     "skipped": 0,
     "log": "docs/qa/mongo-replica-verification.log",
-    "logSha256": "4171879c0e3c45d78be122cb920ca16186ce758be8f154c9a73ed30a491a8011",
+    "logSha256": "26eb5e1285b4a67ab3852da8b7521c0017f0deea68edba11ae64a4254c6bcd2b",
     "coverage": [
       "index initialization and repeated insert behavior",
       "20 competing business-guard updates across two Mongo connections",
       "transaction rollback",
       "unseeded catalog rejection and 16-tool/version load",
       "same-order mock-provider capture concurrency",
-      "read persistence after client close and reconnect"
+      "read persistence after client close and reconnect",
+      "real Nest HTTP member403/admin200/revoke403 with same session",
+      "no optional activity without visitor identifier",
+      "mongod full stop/start then persistent Box read"
     ],
     "notCovered": [
-      "mongod process restart",
-      "UnknownTransactionCommitResult fault injection",
-      "network partition",
+      "multi-node failure election",
+      "real network-partition/unknown-commit fault injection",
       "actual external provider calls",
-      "production topology/backup recovery"
+      "production backup recovery"
     ]
+  },
+  "logsSha256": {
+    "web-browser-verification.log": "af0cf4ec215e5d420d965e44090e21d73838651a7f2ba22ce569a892f1307de4",
+    "api-component-verification.log": "f5db364a3f71294a3f3cedd0f268c9cd941b611481f00cf37b5e85a85acf678e",
+    "admin-browser-verification.log": "3f8791d44e7d3f82086691dfe77dd194f63055f1f50df7aaec97f4038801a97c",
+    "admin-unit-verification.log": "0a7215b7931e40b54d64b68d09bbf6d076cc937573dea71ef20a81cea364269d",
+    "mongo-replica-verification.log": "26eb5e1285b4a67ab3852da8b7521c0017f0deea68edba11ae64a4254c6bcd2b",
+    "admin-proxy-verification.log": "c7f905a83e8c79818bd582cd7ba96b4d38f6c1849bf04421fc0fe0ae57ac9a54"
   }
 }

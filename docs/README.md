@@ -38,6 +38,8 @@ source-plan.md 保留原文。原文中的示意品牌、模型、价格与成�
 - [MongoDB数据模型](data-model.md)
 - [管理端与第一方统计](admin.md)
 - [变更记录](changelog.md)
+- [官方 Spec Kit 接入与实际执行证据](spec-kit.md)
+- [Nest 内 scoped MCP 模块说明](../apps/api/src/mcp/README.md)
 
 ## 产品边界
 

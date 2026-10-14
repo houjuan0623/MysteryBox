@@ -8,3 +8,7 @@ docs/source-plan.md
 **/vendor/**
 **/next-env.d.ts
 .specify/
+
+.next-*/
+test-results/
+playwright-report/

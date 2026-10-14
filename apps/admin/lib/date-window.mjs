@@ -11,10 +11,7 @@ export function defaultWindow(now = new Date(), days = 7) {
 }
 export function windowQuery(window) {
   // 日期控件表示完整 UTC 自然日；结束时间为所选日期次日零点（不包含）。
-  if (
-    !/^\d{4}-\d{2}-\d{2}$/.test(window.from) ||
-    !/^\d{4}-\d{2}-\d{2}$/.test(window.to)
-  )
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(window.from) || !/^\d{4}-\d{2}-\d{2}$/.test(window.to))
     throw new Error("Choose a valid start and end date.");
   const from = new Date(`${window.from}T00:00:00.000Z`);
   const endDay = new Date(`${window.to}T00:00:00.000Z`);
@@ -26,10 +23,8 @@ export function windowQuery(window) {
     utcDate(endDay) !== window.to
   )
     throw new Error("Choose a valid start and end date.");
-  if (from >= to)
-    throw new Error("The start date must be on or before the end date.");
-  if (+to - +from > 31 * DAY)
-    throw new Error("Choose a window of 31 days or fewer.");
+  if (from >= to) throw new Error("The start date must be on or before the end date.");
+  if (+to - +from > 31 * DAY) throw new Error("Choose a window of 31 days or fewer.");
   return new URLSearchParams({
     from: from.toISOString(),
     to: to.toISOString(),

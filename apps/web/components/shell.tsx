@@ -96,13 +96,7 @@ export function Footer() {
     </footer>
   );
 }
-export function ErrorNotice({
-  message,
-  retry,
-}: {
-  message: string;
-  retry?: () => void;
-}) {
+export function ErrorNotice({ message, retry }: { message: string; retry?: () => void }) {
   return (
     <Alert
       variant="destructive"
@@ -131,11 +125,7 @@ export function Spinner({ label = "Loading" }: { label?: string }) {
     </span>
   );
 }
-export function PageLoading({
-  label = "Finding something good…",
-}: {
-  label?: string;
-}) {
+export function PageLoading({ label = "Finding something good…" }: { label?: string }) {
   return (
     <div className="page-loading">
       <span className="loading-box">

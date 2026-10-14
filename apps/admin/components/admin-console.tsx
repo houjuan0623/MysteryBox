@@ -74,9 +74,7 @@ type Access = "checking" | "signin" | "allowed" | "forbidden" | "error";
 const number = new Intl.NumberFormat("en-US");
 const formatCount = (value: number) => number.format(value);
 const titleCase = (value: string) =>
-  value
-    .replace(/[_-]/g, " ")
-    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+  value.replace(/[_-]/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 function Brand({ light = false }: { light?: boolean }) {
   return (
@@ -84,9 +82,7 @@ function Brand({ light = false }: { light?: boolean }) {
       <div
         className={cn(
           "flex size-9 items-center justify-center rounded-xl",
-          light
-            ? "bg-[#dcecbb] text-[#284632]"
-            : "bg-primary text-primary-foreground",
+          light ? "bg-[#dcecbb] text-[#284632]" : "bg-primary text-primary-foreground",
         )}
       >
         <Box className="size-5" strokeWidth={1.8} aria-hidden="true" />
@@ -142,13 +138,10 @@ export function AdminConsole() {
       if (err instanceof ApiError && err.status === 401) {
         setAccess("signin");
         setUser(null);
-      } else if (err instanceof ApiError && err.status === 403)
-        setAccess("forbidden");
+      } else if (err instanceof ApiError && err.status === 403) setAccess("forbidden");
       else {
         setAccess("error");
-        setError(
-          err instanceof Error ? err.message : "Unable to load this report.",
-        );
+        setError(err instanceof Error ? err.message : "Unable to load this report.");
       }
     } finally {
       if (id === requestId.current) setLoading(false);
@@ -173,9 +166,7 @@ export function AdminConsole() {
         setAccess("signin");
       } else {
         setAccess("error");
-        setError(
-          err instanceof Error ? err.message : "Unable to check your session.",
-        );
+        setError(err instanceof Error ? err.message : "Unable to check your session.");
       }
     }
   }, [loadReport]);
@@ -197,11 +188,7 @@ export function AdminConsole() {
       setReport(null);
       setAccess("signin");
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to sign out. Please retry.",
-      );
+      setError(err instanceof Error ? err.message : "Unable to sign out. Please retry.");
     } finally {
       setLoading(false);
     }
@@ -305,9 +292,7 @@ export function AdminConsole() {
               First-party activity only. Read-only access by design.
             </p>
           </div>
-          <p className="mt-6 px-1 text-[10px] text-[#a7b9ac]">
-            MYSTERYBOX · INTERNAL
-          </p>
+          <p className="mt-6 px-1 text-[10px] text-[#a7b9ac]">MYSTERYBOX · INTERNAL</p>
         </div>
       </aside>
       <div className="min-w-0">
@@ -370,8 +355,7 @@ export function AdminConsole() {
               onClick={() => loadReport(period)}
               disabled={loading}
             >
-              <RefreshCw className={cn("size-4", loading && "animate-spin")} />{" "}
-              Refresh
+              <RefreshCw className={cn("size-4", loading && "animate-spin")} /> Refresh
             </Button>
           </div>
           <form
@@ -379,17 +363,13 @@ export function AdminConsole() {
             className="mb-7 flex flex-wrap items-end gap-3 rounded-xl border bg-white p-4"
           >
             <div className="mr-2 flex h-9 items-center gap-2 text-sm font-medium">
-              <CalendarDays className="size-4 text-muted-foreground" /> Date
-              window{" "}
+              <CalendarDays className="size-4 text-muted-foreground" /> Date window{" "}
               <Badge variant="secondary" className="font-normal">
                 UTC
               </Badge>
             </div>
             <div className="grid gap-1.5">
-              <Label
-                htmlFor="from-date"
-                className="text-xs text-muted-foreground"
-              >
+              <Label htmlFor="from-date" className="text-xs text-muted-foreground">
                 From
               </Label>
               <Input
@@ -404,10 +384,7 @@ export function AdminConsole() {
               />
             </div>
             <div className="grid gap-1.5">
-              <Label
-                htmlFor="to-date"
-                className="text-xs text-muted-foreground"
-              >
+              <Label htmlFor="to-date" className="text-xs text-muted-foreground">
                 Through
               </Label>
               <Input
@@ -433,8 +410,8 @@ export function AdminConsole() {
               Last 30 days
             </Button>
             <p className="w-full text-xs text-muted-foreground">
-              Both dates include their full UTC day. Maximum 31 days; activity
-              is retained for 30 days.
+              Both dates include their full UTC day. Maximum 31 days; activity is retained
+              for 30 days.
             </p>
           </form>
           {error && (
@@ -445,10 +422,7 @@ export function AdminConsole() {
             </Alert>
           )}
           <Tabs value={tab} onValueChange={setTab}>
-            <TabsList
-              aria-label="Analytics views"
-              className="mb-6 bg-[#e9ede6] p-1"
-            >
+            <TabsList aria-label="Analytics views" className="mb-6 bg-[#e9ede6] p-1">
               <TabsTrigger value="overview" className="px-4">
                 <LayoutDashboard /> Overview
               </TabsTrigger>
@@ -486,8 +460,8 @@ export function AdminConsole() {
           </Tabs>
           <footer className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t pt-5 text-xs text-muted-foreground">
             <span className="flex items-center gap-1.5">
-              <ShieldCheck className="size-3.5" /> Private workspace · No
-              third-party trackers
+              <ShieldCheck className="size-3.5" /> Private workspace · No third-party
+              trackers
             </span>
             <span aria-live="polite">
               {updatedAt && !loading
@@ -516,10 +490,7 @@ function Metric({
 }) {
   return (
     <Card
-      className={cn(
-        "gap-0 py-5 shadow-none",
-        accent && "border-[#ccdec4] bg-[#edf4e8]",
-      )}
+      className={cn("gap-0 py-5 shadow-none", accent && "border-[#ccdec4] bg-[#edf4e8]")}
     >
       <CardContent>
         <div className="mb-5 flex items-center justify-between gap-2">
@@ -544,10 +515,7 @@ function Metric({
 
 function Overview({ summary }: { summary: Summary }) {
   const c = summary.counts;
-  const maxInterest = Math.max(
-    0,
-    ...summary.interests.map((item) => item.count),
-  );
+  const maxInterest = Math.max(0, ...summary.interests.map((item) => item.count));
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -573,19 +541,15 @@ function Overview({ summary }: { summary: Summary }) {
         <Metric
           label="Accounts last signed in"
           value={c.activeUsers}
-          detail="Login, box, or checkout activity"
+          detail="Latest successful sign-in in this window"
           icon={<UserRound className="size-4" />}
         />
       </div>
       <div className="grid gap-6 xl:grid-cols-[1.25fr_1fr]">
         <Card className="shadow-none">
           <CardHeader>
-            <CardTitle className="text-base">
-              From curiosity to discovery
-            </CardTitle>
-            <CardDescription>
-              Recorded participation at each step.
-            </CardDescription>
+            <CardTitle className="text-base">From curiosity to discovery</CardTitle>
+            <CardDescription>Recorded participation at each step.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-3">
             {[
@@ -615,9 +579,7 @@ function Overview({ summary }: { summary: Summary }) {
                   </span>
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{step.label}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">
-                      {step.detail}
-                    </p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{step.detail}</p>
                   </div>
                   <span className="ml-auto text-xl font-semibold tabular-nums">
                     {formatCount(step.value)}
@@ -629,19 +591,15 @@ function Overview({ summary }: { summary: Summary }) {
               </div>
             ))}
             <p className="pt-2 text-xs leading-relaxed text-muted-foreground">
-              Activity counts, not a conversion rate. Anonymous IDs and
-              signed-in accounts may represent the same person.
+              Activity counts, not a conversion rate. Anonymous IDs and signed-in accounts
+              may represent the same person.
             </p>
           </CardContent>
         </Card>
         <Card className="shadow-none">
           <CardHeader>
-            <CardTitle className="text-base">
-              What’s catching their eye
-            </CardTitle>
-            <CardDescription>
-              Interests attached to recorded activity.
-            </CardDescription>
+            <CardTitle className="text-base">What’s catching their eye</CardTitle>
+            <CardDescription>Interests attached to recorded activity.</CardDescription>
           </CardHeader>
           <CardContent>
             {summary.interests.some((item) => item.count > 0) ? (
@@ -697,20 +655,11 @@ function Overview({ summary }: { summary: Summary }) {
             {[
               ["Free boxes", c.freeBoxes, "Generated in this window"],
               ["Premium boxes", c.premiumBoxes, "Generated in this window"],
-              [
-                "Demo / test orders",
-                c.demoOrders,
-                "Simulation, not actual revenue",
-              ],
+              ["Demo / test orders", c.demoOrders, "Simulation, not actual revenue"],
               ["Paid orders", c.paidOrders, "Reported by the payment backend"],
             ].map(([label, value, detail]) => (
-              <div
-                key={String(label)}
-                className="border-l-2 border-border pl-4"
-              >
-                <p className="text-xs font-medium text-muted-foreground">
-                  {label}
-                </p>
+              <div key={String(label)} className="border-l-2 border-border pl-4">
+                <p className="text-xs font-medium text-muted-foreground">{label}</p>
                 <p className="my-2 text-2xl font-semibold tabular-nums">
                   {formatCount(Number(value))}
                 </p>
@@ -727,9 +676,9 @@ function Overview({ summary }: { summary: Summary }) {
         <AlertTitle>A note on these numbers</AlertTitle>
         <AlertDescription className="text-xs leading-relaxed text-muted-foreground">
           <p>
-            Anonymous browsers are not people. Clearing cookies or using another
-            browser creates another visitor ID; shared browsers can group
-            multiple people. No fingerprinting is used.
+            Anonymous browsers are not people. Clearing cookies or using another browser
+            creates another visitor ID; shared browsers can group multiple people. No
+            fingerprinting is used.
           </p>
           {summary.notes.length > 0 && (
             <ul className="mt-2 list-disc space-y-1 pl-4">
@@ -774,9 +723,7 @@ function UserDirectory({ users }: { users: User[] }) {
                 <TableRow key={user.id}>
                   <TableCell className="font-medium">{user.email}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant={user.role === "admin" ? "default" : "secondary"}
-                    >
+                    <Badge variant={user.role === "admin" ? "default" : "secondary"}>
                       {user.role || "member"}
                     </Badge>
                   </TableCell>
@@ -810,8 +757,7 @@ function ActivityLog({ events }: { events: ActivityEvent[] }) {
           <div>
             <CardTitle className="text-base">Latest events</CardTitle>
             <CardDescription className="mt-1.5">
-              Up to 100 events in this window. No IP addresses or raw visitor
-              IDs.
+              Up to 100 events in this window. No IP addresses or raw visitor IDs.
             </CardDescription>
           </div>
           <Badge variant="secondary">{events.length} shown</Badge>
@@ -881,9 +827,7 @@ function EmptyState({
 }) {
   return (
     <div className="flex min-h-52 flex-col items-center justify-center px-4 py-8 text-center">
-      <span className="mb-4 rounded-xl bg-muted p-3 text-muted-foreground">
-        {icon}
-      </span>
+      <span className="mb-4 rounded-xl bg-muted p-3 text-muted-foreground">{icon}</span>
       <p className="text-sm font-medium">{title}</p>
       <p className="mt-2 max-w-xs text-xs leading-relaxed text-muted-foreground">
         {description}
@@ -918,9 +862,7 @@ function AccessScreen({
             {description}
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col items-center gap-4">
-          {children}
-        </CardContent>
+        <CardContent className="flex flex-col items-center gap-4">{children}</CardContent>
       </Card>
     </main>
   );
@@ -957,9 +899,7 @@ function SignIn({ onSignedIn }: { onSignedIn: () => Promise<void> }) {
       }
     } catch (err) {
       setError(
-        err instanceof Error
-          ? err.message
-          : "Unable to sign in. Please try again.",
+        err instanceof Error ? err.message : "Unable to sign in. Please try again.",
       );
     } finally {
       setBusy(false);
@@ -979,12 +919,11 @@ function SignIn({ onSignedIn }: { onSignedIn: () => Promise<void> }) {
             <span className="text-[#dcecbb]">Meaningful insights.</span>
           </h1>
           <p className="mt-6 max-w-sm text-base leading-relaxed text-[#b4c6ba]">
-            A private home for your product’s activity, people, and
-            possibilities.
+            A private home for your product’s activity, people, and possibilities.
           </p>
           <div className="mt-12 inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-2 text-xs text-[#d0ded4]">
-            <ShieldCheck className="size-4 text-[#dcecbb]" /> Secure access ·
-            First-party insights
+            <ShieldCheck className="size-4 text-[#dcecbb]" /> Secure access · First-party
+            insights
           </div>
         </div>
         <p className="text-xs text-[#9daf9f]">MysteryBox administration</p>
@@ -1040,9 +979,7 @@ function SignIn({ onSignedIn }: { onSignedIn: () => Promise<void> }) {
                   placeholder="000000"
                   className="h-12 bg-white text-center text-xl tracking-[.4em]"
                   value={code}
-                  onChange={(e) =>
-                    setCode(e.target.value.replace(/\D/g, "").slice(0, 6))
-                  }
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   required
                   autoFocus
                 />
@@ -1052,9 +989,9 @@ function SignIn({ onSignedIn }: { onSignedIn: () => Promise<void> }) {
               <Alert>
                 <AlertTitle>Local demo email mode</AlertTitle>
                 <AlertDescription className="text-xs">
-                  No email is delivered in demo mode. Use the local API’s
-                  development code, or configure a real email provider. Admin
-                  permissions are still required.
+                  No email is delivered in demo mode. Use the local API’s development
+                  code, or configure a real email provider. Admin permissions are still
+                  required.
                 </AlertDescription>
               </Alert>
             )}
@@ -1096,9 +1033,9 @@ function SignIn({ onSignedIn }: { onSignedIn: () => Promise<void> }) {
             )}
           </form>
           <p className="mt-8 flex items-start gap-2 border-t pt-5 text-xs leading-relaxed text-muted-foreground">
-            <ShieldCheck className="mt-0.5 size-3.5 shrink-0" /> Access is
-            restricted to authorized administrators. Your sign-in session is
-            stored in an HttpOnly cookie.
+            <ShieldCheck className="mt-0.5 size-3.5 shrink-0" /> Access is restricted to
+            authorized administrators. Your sign-in session is stored in an HttpOnly
+            cookie.
           </p>
         </div>
         <p className="mt-12 text-xs text-muted-foreground">

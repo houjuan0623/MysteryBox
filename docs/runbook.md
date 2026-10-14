@@ -113,7 +113,7 @@ node scripts/http-smoke.mjs
 
 必须运行ESLint、Prettier检查、TypeScript、单元、三个应用构建和HTTP测试；EditorConfig控制编辑格式。根check的实际覆盖以package.json为准，缺失某项不能视为该项通过。真实供应商和浏览器E2E仍单独验收。Mongo 真库用 TEST_MONGODB_URI 或 npm run test:mongo 显式启动 MongoDB 8.0.17 单节点 replica-set fixture；默认 npm test 在未设置 RUN_MONGO_TESTS=1/TEST_MONGODB_URI 时跳过 Mongo 集成，必须在报告中注明。fixture 仍是真正的 mongod，不是 MemoryStore。外部 URI 测试使用随机名称的 mysterybox_test_* 数据库，当前不自动删除该外部数据库；需按授权与保留政策清理，绝不能指向生产。测试会写demo订单/测试记录，禁止生产库。
 
-Playwright 的 Web 配置使用 3000 与 Chromium，可启动/复用 dev 服务器；Admin 有独立 test:ui 配置。当前恢复版有 8 个 Web 浏览器用例尚未执行，5 个 Admin 浏览器用例启动被环境 socket 限制阻塞；另 1 个 Admin 实际代理 HTTP 请求用例已通过。HTTP 请求测试不启动浏览器，不能据此标记 UI、登录或可访问性通过。最新局部证据见 acceptance.md。
+Playwright 的 Web 配置使用 3000 与 Chromium；Admin 有独立 test:ui 配置。最新原生运行 Web 8/8、Admin 6/6 已通过，包含实际浏览器用例；Admin 五个 UI 用例使用 API fixture，第六项是运行中代理 HTTP 检查。真实 Nest/Mongo 角色授权另由集成测试验证，不能混淆这三层证据。环境受限时应记录浏览器启动阻塞，不把 HTTP 测试冒充浏览器；最新范围见 acceptance.md。
 
 http-smoke.mjs旧版使用独立14000端口、已构建API、强制demo，生成docs/qa/http-smoke.json。恢复目录必须新跑才可出现新的通过报告；历史报告另命名并明确来源。
 
@@ -191,3 +191,11 @@ npm run start -w @mysterybox/api
 ## 9. 停机与恢复
 
 SIGTERM/SIGINT停止事件循环、关闭连接；memory不保留。MongoDB生产建立加密备份、恢复演练与最小权限。数据库恢复快照可能落后PayPal，必须对账后继续capture/履约，不能按旧pending重复扣款。当前设计没有完整自动备份、删除、退款与财务对账作业。
+
+## 10. MCP 与官方 Spec Kit
+
+公开演示维持 MCP_ENABLED=0。若经授权启用，仅在 API 设置独立 MCP_TOKEN_SHA256、MCP_PRINCIPAL_ID、MCP_SCOPES，默认仍只允许本机；不把 token、摘要或数据库秘密放在前端部署。模块不代建凭据、不代配置客户端。MCP_ALLOW_REMOTE、MCP_ALLOWED_HOSTS、MCP_ALLOWED_ORIGINS 的严格约束与安全限制见[模块说明](../apps/api/src/mcp/README.md)，不能仅设置远程开关就认为安全部署已完成。
+
+撤销接入可关闭 MCP 或替换已配置 token 摘要并重启；保留 principal 才能在轮换后访问同一私有草稿空间。审计记录尚无自动保留清理策略，应在广泛使用前明确。每进程限流不是分布式防刷。
+
+Spec Kit 使用已保存的官方 generic 命令与项目规格；干净检出显式设置 SPECIFY_FEATURE=001-three-app-foundation 再运行前置校验。不要把 /speckit.* 当作 shell 命令，也不要在非空仓库使用未经审查的 force 初始化。官方原始模板/脚本与 source-plan.md 都不应被通用格式化改写；参见[Spec Kit 运行说明](spec-kit.md)。

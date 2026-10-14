@@ -12,13 +12,7 @@ import {
   type PublicConfig,
   type User,
 } from "@mysterybox/shared";
-import {
-  api,
-  boxTokens,
-  catalogDate,
-  errorMessage,
-  getConfig,
-} from "@/lib/api";
+import { api, boxTokens, catalogDate, errorMessage, getConfig } from "@/lib/api";
 import { Icon } from "@/components/icon";
 import { ErrorNotice, PageLoading, Spinner } from "@/components/shell";
 export function BoxResults({ id }: { id: string }) {
@@ -79,9 +73,7 @@ export function BoxResults({ id }: { id: string }) {
   async function saveFavorite(toolId: string) {
     if (favoriteBusy) return;
     if (!user) {
-      setFavoriteError(
-        "Sign in to keep your favorite tools in your collection.",
-      );
+      setFavoriteError("Sign in to keep your favorite tools in your collection.");
       return;
     }
     setFavoriteBusy(toolId);
@@ -93,9 +85,7 @@ export function BoxResults({ id }: { id: string }) {
         body: JSON.stringify({ saved }),
       });
       setFavorites((current) =>
-        saved
-          ? [...current, toolId]
-          : current.filter((value) => value !== toolId),
+        saved ? [...current, toolId] : current.filter((value) => value !== toolId),
       );
     } catch (err) {
       setFavoriteError(errorMessage(err));
@@ -151,13 +141,9 @@ export function BoxResults({ id }: { id: string }) {
       <section className="site-container empty-page">
         <Icon name="box" size={40} />
         <h1>This box needs another look.</h1>
-        <ErrorNotice
-          message={error || "The box could not be loaded."}
-          retry={load}
-        />
+        <ErrorNotice message={error || "The box could not be loaded."} retry={load} />
         <p>
-          If you opened this box in another session, sign in to the account that
-          owns it.
+          If you opened this box in another session, sign in to the account that owns it.
         </p>
         <div className="hero-actions">
           <Button
@@ -191,8 +177,8 @@ export function BoxResults({ id }: { id: string }) {
               <div className="result-tags">
                 <span>{INTEREST_LABELS[box.interest]}</span>
                 <span>
-                  {box.tools.length} {box.tools.length === 1 ? "tool" : "tools"}{" "}
-                  to explore
+                  {box.tools.length} {box.tools.length === 1 ? "tool" : "tools"} to
+                  explore
                 </span>
                 <span>
                   {new Date(box.createdAt).toLocaleDateString("en-US", {
@@ -217,13 +203,9 @@ export function BoxResults({ id }: { id: string }) {
         <div className="section-heading">
           <div>
             <div className="eyebrow">THE GOOD STUFF INSIDE</div>
-            <h2>
-              Meet your next starting point{box.tools.length > 1 ? "s" : ""}.
-            </h2>
+            <h2>Meet your next starting point{box.tools.length > 1 ? "s" : ""}.</h2>
           </div>
-          <span className="small-muted">
-            Independent tools. Official links.
-          </span>
+          <span className="small-muted">Independent tools. Official links.</span>
         </div>
         {favoriteError && (
           <div className="info-notice" role="status">
@@ -232,9 +214,7 @@ export function BoxResults({ id }: { id: string }) {
         )}
         <div className="recommendation-list">
           {box.tools.map((recommendation, index) => {
-            const tool = tools.find(
-              (item) => item.id === recommendation.toolId,
-            );
+            const tool = tools.find((item) => item.id === recommendation.toolId);
             return (
               <Card
                 className="recommendation flex-row gap-0 rounded-xl p-5 shadow-none sm:gap-6 sm:p-7"
@@ -264,9 +244,7 @@ export function BoxResults({ id }: { id: string }) {
                       aria-pressed={favorites.includes(recommendation.toolId)}
                     >
                       <Icon name="heart" size={16} />
-                      {favorites.includes(recommendation.toolId)
-                        ? "Saved"
-                        : "Save"}
+                      {favorites.includes(recommendation.toolId) ? "Saved" : "Save"}
                     </Button>
                   </div>
                   <p className="recommendation-tagline">{tool?.tagline}</p>
@@ -283,29 +261,21 @@ export function BoxResults({ id }: { id: string }) {
                   <div className="prompt-card">
                     <div className="prompt-heading">
                       <span>
-                        <Icon name="sparkles" size={15} />A PROMPT TO GET
-                        STARTED
+                        <Icon name="sparkles" size={15} />A PROMPT TO GET STARTED
                       </span>
                       <Button
                         variant="ghost"
                         className={`text-button h-auto p-0 text-xs ${copied === recommendation.toolId ? "copy-complete" : ""}`}
                         onClick={() =>
-                          copyPrompt(
-                            recommendation.toolId,
-                            recommendation.prompt,
-                          )
+                          copyPrompt(recommendation.toolId, recommendation.prompt)
                         }
                       >
                         <Icon
-                          name={
-                            copied === recommendation.toolId ? "check" : "copy"
-                          }
+                          name={copied === recommendation.toolId ? "check" : "copy"}
                           size={15}
                         />
                         <span aria-live="polite">
-                          {copied === recommendation.toolId
-                            ? "Copied"
-                            : "Copy prompt"}
+                          {copied === recommendation.toolId ? "Copied" : "Copy prompt"}
                         </span>
                       </Button>
                     </div>
@@ -366,10 +336,7 @@ export function BoxResults({ id }: { id: string }) {
                 CONNECT THE DOTS
               </div>
               <h2>Here’s how it comes together.</h2>
-              <p>
-                A practical path from idea to action. Adapt it to fit how you
-                work.
-              </p>
+              <p>A practical path from idea to action. Adapt it to fit how you work.</p>
             </div>
             <ol className="workflow-steps">
               {box.workflow.map((step, index) => (
@@ -377,8 +344,7 @@ export function BoxResults({ id }: { id: string }) {
                   <span className="workflow-number">{index + 1}</span>
                   <div>
                     <span className="workflow-tool">
-                      {tools.find((tool) => tool.id === step.toolId)?.name ||
-                        step.toolId}
+                      {tools.find((tool) => tool.id === step.toolId)?.name || step.toolId}
                     </span>
                     <h3>{step.title}</h3>
                     <p>{step.description}</p>
@@ -396,13 +362,10 @@ export function BoxResults({ id }: { id: string }) {
             <h2>A discovery worth keeping.</h2>
             <p>
               Email yourself this box, or{" "}
-              <Link href="/account">sign in to keep it in your collection</Link>
-              .
+              <Link href="/account">sign in to keep it in your collection</Link>.
             </p>
             {config?.emailMode === "demo" && (
-              <span className="demo-tag">
-                Demo email · nothing will be sent
-              </span>
+              <span className="demo-tag">Demo email · nothing will be sent</span>
             )}
           </div>
           <form onSubmit={sendEmail}>
@@ -444,8 +407,7 @@ export function BoxResults({ id }: { id: string }) {
                 required
               />
               <span>
-                Send this box to the email above. This request is for a single
-                email.
+                Send this box to the email above. This request is for a single email.
               </span>
             </label>
             {emailStatus && (
@@ -458,12 +420,11 @@ export function BoxResults({ id }: { id: string }) {
         </section>
         <div className="results-bottom-note">
           <p>
-            AI recommendations can be imperfect. Verify features, prices, and
-            terms on the official tool websites before signing up.
+            AI recommendations can be imperfect. Verify features, prices, and terms on the
+            official tool websites before signing up.
           </p>
           <Link href="/discover" className="text-link">
-            A different direction? Open another box{" "}
-            <Icon name="arrow" size={17} />
+            A different direction? Open another box <Icon name="arrow" size={17} />
           </Link>
         </div>
       </div>

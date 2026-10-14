@@ -64,10 +64,7 @@ function fakeFetch(...replies: Reply[]): {
   calls: Call[];
 } {
   const calls: Call[] = [];
-  const fetchImpl = (async (
-    url: string | URL | Request,
-    init: RequestInit = {},
-  ) => {
+  const fetchImpl = (async (url: string | URL | Request, init: RequestInit = {}) => {
     const call = { url: String(url), init };
     calls.push(call);
     assert.ok(replies.length, `Unexpected request: ${call.url}`);
@@ -88,9 +85,7 @@ const hasCode = (code: string, indeterminate?: boolean) => (error: unknown) =>
   error.code === code &&
   (indeterminate === undefined || error.indeterminate === indeterminate);
 async function validGenerated() {
-  const { generationMode: _, ...value } = await new DemoAiProvider().generate(
-    input,
-  );
+  const { generationMode: _, ...value } = await new DemoAiProvider().generate(input);
   return value;
 }
 const envelope = (value: unknown) => ({
@@ -109,10 +104,7 @@ const orderInput: InspectInput = {
   amountCents: 299,
   currency: "USD",
 };
-function order(
-  status = "COMPLETED",
-  captureStatus: string | null = "COMPLETED",
-): any {
+function order(status = "COMPLETED", captureStatus: string | null = "COMPLETED"): any {
   return {
     id: "PAYPAL1",
     status,
@@ -150,10 +142,7 @@ test("all demo adapters are deterministic and make zero network requests", async
   assert.deepEqual(a, await p.ai.generate(input));
   assert.equal(a.tools.length, 1);
   assert.equal(a.generationMode, "demo");
-  assert.equal(
-    (await p.ai.generate({ ...input, tier: "premium" })).tools.length,
-    3,
-  );
+  assert.equal((await p.ai.generate({ ...input, tier: "premium" })).tools.length, 3);
   const payment = await p.payments.create({
     ...orderInput,
     createKey: "create/1",
@@ -203,30 +192,16 @@ test("AI rejects malicious IDs, URL fields, duplicate recommendations, and forei
   const original = await validGenerated();
   const bad = structuredClone(original);
   bad.tools[0]!.toolId = "evil-tool";
-  assert.throws(
-    () => validateGeneratedBox(bad, input),
-    hasCode("AI_INVALID_OUTPUT"),
-  );
+  assert.throws(() => validateGeneratedBox(bad, input), hasCode("AI_INVALID_OUTPUT"));
   const extra: any = structuredClone(original);
   extra.tools[0].website = "https://evil.example/";
-  assert.throws(
-    () => validateGeneratedBox(extra, input),
-    hasCode("AI_INVALID_OUTPUT"),
-  );
+  assert.throws(() => validateGeneratedBox(extra, input), hasCode("AI_INVALID_OUTPUT"));
   const link = structuredClone(original);
   link.tools[0]!.prompt += " Visit https://evil.example/.";
-  assert.throws(
-    () => validateGeneratedBox(link, input),
-    hasCode("AI_INVALID_OUTPUT"),
-  );
+  assert.throws(() => validateGeneratedBox(link, input), hasCode("AI_INVALID_OUTPUT"));
   const foreign = structuredClone(original);
-  foreign.workflow[0]!.toolId = tools.find(
-    (t) => t.id !== original.tools[0]!.toolId,
-  )!.id;
-  assert.throws(
-    () => validateGeneratedBox(foreign, input),
-    hasCode("AI_INVALID_OUTPUT"),
-  );
+  foreign.workflow[0]!.toolId = tools.find((t) => t.id !== original.tools[0]!.toolId)!.id;
+  assert.throws(() => validateGeneratedBox(foreign, input), hasCode("AI_INVALID_OUTPUT"));
   assert.throws(
     () =>
       validateGeneratedBox(
@@ -242,8 +217,7 @@ test("AI rejects malicious IDs, URL fields, duplicate recommendations, and forei
 test("OpenAI uses strict catalog schema and store false", async () => {
   const f = fakeFetch(envelope(await validGenerated()));
   assert.equal(
-    (await new OpenAiProvider(live, f.fetchImpl).generate(input))
-      .generationMode,
+    (await new OpenAiProvider(live, f.fetchImpl).generate(input)).generationMode,
     "openai",
   );
   assert.equal(f.calls[0]!.url, "https://api.openai.com/v1/responses");
@@ -263,9 +237,7 @@ test("OpenAI refusal, incomplete, malformed, HTTP error and timeout are explicit
     [
       {
         status: "completed",
-        output: [
-          { type: "message", content: [{ type: "refusal", refusal: "No" }] },
-        ],
+        output: [{ type: "message", content: [{ type: "refusal", refusal: "No" }] }],
       },
       "AI_REFUSED",
     ],
@@ -273,9 +245,7 @@ test("OpenAI refusal, incomplete, malformed, HTTP error and timeout are explicit
     [
       {
         status: "completed",
-        output: [
-          { type: "message", content: [{ type: "output_text", text: "{bad" }] },
-        ],
+        output: [{ type: "message", content: [{ type: "output_text", text: "{bad" }] }],
       },
       "AI_INVALID_OUTPUT",
     ],
@@ -311,10 +281,7 @@ test("Vercel uses fixed Responses endpoint, gateway auth and provider/model ID",
     "vercel",
   );
   assert.equal(f.calls[0]!.url, "https://ai-gateway.vercel.sh/v1/responses");
-  assert.equal(
-    headers(f.calls[0]!).get("authorization"),
-    "Bearer gateway-test-only",
-  );
+  assert.equal(headers(f.calls[0]!).get("authorization"), "Bearer gateway-test-only");
   assert.equal(payload(f.calls[0]!).model, "openai/test-model");
   assert.equal(payload(f.calls[0]!).text.format.strict, true);
   assert.equal(f.calls[0]!.init.redirect, "error");
@@ -393,17 +360,11 @@ test("PayPal create controls amount/merchant/host/return and stable idempotency"
   await p.create(args);
   assert.equal(f.calls.length, 3);
   for (const call of f.calls.slice(1)) {
-    assert.equal(
-      call.url,
-      "https://api-m.sandbox.paypal.com/v2/checkout/orders",
-    );
+    assert.equal(call.url, "https://api-m.sandbox.paypal.com/v2/checkout/orders");
     assert.equal(headers(call).get("paypal-request-id"), "create-internal-1");
     assert.equal(payload(call).purchase_units[0].amount.value, "2.99");
     assert.equal(payload(call).purchase_units[0].custom_id, "internal-1");
-    assert.equal(
-      payload(call).purchase_units[0].payee.merchant_id,
-      "MERCHANT1",
-    );
+    assert.equal(payload(call).purchase_units[0].payee.merchant_id, "MERCHANT1");
     assert.equal(
       payload(call).payment_source.paypal.experience_context.return_url,
       "https://example.com/checkout/return?order=internal-1",
@@ -447,10 +408,7 @@ test("PayPal capture validates before charging and reads final state", async () 
     f.calls[2]!.url,
     "https://api-m.sandbox.paypal.com/v2/checkout/orders/PAYPAL1/capture",
   );
-  assert.equal(
-    headers(f.calls[2]!).get("paypal-request-id"),
-    "capture-internal-1",
-  );
+  assert.equal(headers(f.calls[2]!).get("paypal-request-id"), "capture-internal-1");
   assert.equal(f.calls[3]!.init.method, "GET");
 });
 test("PayPal never captures unapproved or cross-order payment", async () => {
@@ -530,26 +488,15 @@ test("all amount/currency/custom/merchant/order/capture mismatches fail closed",
 test("PayPal requires COMPLETED, never refunded, declined or failed", () => {
   for (const status of ["REFUNDED", "PARTIALLY_REFUNDED", "DECLINED", "FAILED"])
     assert.throws(
-      () =>
-        validatePayPalOrder(
-          order("COMPLETED", status),
-          orderInput,
-          "MERCHANT1",
-        ),
+      () => validatePayPalOrder(order("COMPLETED", status), orderInput, "MERCHANT1"),
       hasCode("PAYMENT_NOT_COMPLETED"),
     );
   assert.throws(
-    () =>
-      validatePayPalOrder(
-        order("APPROVED", "COMPLETED"),
-        orderInput,
-        "MERCHANT1",
-      ),
+    () => validatePayPalOrder(order("APPROVED", "COMPLETED"), orderInput, "MERCHANT1"),
     hasCode("PAYMENT_NOT_COMPLETED"),
   );
   assert.deepEqual(
-    validatePayPalOrder(order("APPROVED", null), orderInput, "MERCHANT1")
-      .result,
+    validatePayPalOrder(order("APPROVED", null), orderInput, "MERCHANT1").result,
     { status: "pending", captureId: "" },
   );
 });
@@ -674,9 +621,7 @@ test("Resend escapes HTML and uses catalog links/text/fixed sender/idempotency",
   }
 });
 test("Resend failures do not claim sent or leak upstream data", async () => {
-  const f = fakeFetch(
-    new Response("secret/private upstream detail", { status: 500 }),
-  );
+  const f = fakeFetch(new Response("secret/private upstream detail", { status: 500 }));
   await assert.rejects(
     new ResendEmailProvider(live, f.fetchImpl).sendCode({
       email: "person@example.com",
@@ -688,10 +633,7 @@ test("Resend failures do not claim sent or leak upstream data", async () => {
       !(error as Error).message.includes("secret"),
   );
   await assert.rejects(
-    new ResendEmailProvider(
-      live,
-      fakeFetch({ error: "failed" }).fetchImpl,
-    ).sendCode({
+    new ResendEmailProvider(live, fakeFetch({ error: "failed" }).fetchImpl).sendCode({
       email: "person@example.com",
       code: "123456",
       idempotencyKey: "code/1",

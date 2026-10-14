@@ -6,62 +6,54 @@
 
 ## 1. 当前恢复状态
 
-本文件严格区分历史运行与当前恢复检查。新的完整工程、CI和供应商结果须由主任务完成后更新，不能沿用旧主机的通过标签。
+更新至 2026-10-14 08:10 UTC，明确区分局部实测、最终质量门禁、历史主机结果。以下均来自新恢复工程；外部供应商仍全部使用 demo/mock，没有实际扣款、真实模型、真实邮件或生产部署证据。
 
-| 当前恢复项目                  | 状态                                                                                   |
-| ----------------------------- | -------------------------------------------------------------------------------------- |
-| 用户source-plan.md            | 已重读Library并核对6,729字节与已知SHA-256                                              |
-| 16条catalog语义               | 已由保留完整定义重建；16条结构/来源字段/兴趣覆盖检查已记录在恢复QA文件                 |
-| 文档                          | 依据保留正文/修订恢复，不声明字节级一致                                                |
-| 当前TypeScript/单元/构建/HTTP | Web/Admin 局部通过；API 领域/安全 17 项、适配器 mock 33 项通过；全门禁待最终运行       |
-| 当前MongoDB/浏览器/CI         | Mongo 真副本集局部 1/1 通过；浏览器/CI 待验证                                          |
-| 新Admin/角色/第一方统计       | Admin 单元/类型/独立构建/代理通过；后端契约和角色/统计函数测试已接通，完整 HTTP 待验收 |
-| 真实供应商/生产部署           | 未在此恢复任务验证                                                                     |
+| 当前项目                           | 最新结果/边界                                                                             |
+| ---------------------------------- | ----------------------------------------------------------------------------------------- |
+| 用户 source-plan.md                | Library 精确恢复，6,729 字节与已知 SHA-256 不变                                           |
+| 目录与文档静态检查                 | 16 条目录、四兴趣至少 4 条，来源字段/HTTPS/ID/相对链接/围栏检查；重建文档非逐字节旧稿     |
+| API 组件测试                       | 65/65，包含 scoped MCP 13 项，不含下面单独执行的 Mongo 测试；无真实供应商调用             |
+| Mongo 集成                         | 实际 MongoDB 8.0.17 replica set，1/1；涵盖真实 Nest HTTP 角色切换和 mongod 完整停启持久化 |
+| Web 单元                           | 17 项通过（包含新增隐私测试，核心任务报告）                                               |
+| Admin 单元                         | 5 项通过                                                                                  |
+| Web 浏览器                         | 8/8，通过真实 Chromium + 本地全 demo 应用；见范围说明                                     |
+| Admin 浏览器/代理                  | 6/6，其中 5 个使用 API 测试 fixture 的 UI 用例，1 个实际 Next 代理 HTTP 用例              |
+| TypeScript/独立构建                | 早先 Web/Admin scoped 结果通过；全部最终门禁正重新运行                                    |
+| 根 npm run check / HTTP / 依赖审计 | 最终结果待核心任务完成；不能把组件通过当作整套通过                                        |
+| 真实供应商/公开生产                | 未验证                                                                                    |
 
-### 当前用户前台局部证据（2026-10-14 约 07:13 UTC）
+### API 与 scoped MCP
 
-Web 实现任务在新恢复目录执行以下组合命令，工具返回退出码 0：
+[API 当前组件日志](qa/api-component-verification.log)记录 65/65、0 失败、0 跳过。MCP 13 项已经包含在 65 中，不能再次相加。供应商适配器使用 mock，Mongo 的 1 项另行运行。MCP 覆盖真实 SDK 初始化、scope/身份隔离、严格参数、草稿幂等/并发/审计，以及实际 Nest 路由顺序；没有创建生产访问凭据、注册外部客户端或验证远程部署。
 
-```bash
-npm run typecheck -w @mysterybox/web && npm run test -w @mysterybox/web && npm run build -w @mysterybox/web
-```
+早先 17 项领域/安全与 33 项 adapter 分组只是中间结果，由当前 65 项结果替代；不再当作最终分组计数。完整项目门禁和依赖清理仍以稍后的根检查为准。
 
-- TypeScript：tsc --noEmit，无诊断。
-- 单元：12/12，0 失败、0 跳过。
-- Next.js 16.4.0 生产构建：成功，静态生成 9/9；包含首页、discover、box、account、checkout/return、代理、privacy 和 terms 等路由。
-- 原始 stdout 未另存文件；此记录依据实现任务保留的工具输出报告，不伪装成原始运行日志。
-- 八个 Web Playwright 用例已编写，在替换主机上尚未执行；类型、单元与构建不代表浏览器或 Nest/Mongo 端到端通过。
+### MongoDB 真副本集
 
-### 当前管理端局部证据（2026-10-14 07:20 UTC）
-
-以下为新恢复目录实际运行，不继承旧主机结果。管理端实现任务报告独立生产构建通过；文档任务已读取并保留单元/类型和代理测试日志。
-
-| 命令                                                                              | 结果与范围                                                                                  |
-| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| npm test -w @mysterybox/admin                                                     | 5/5，UTC 默认/完整日期/无效及超限日期/缺失时间戳等纯函数                                    |
-| npm run typecheck -w @mysterybox/admin                                            | 退出成功，管理端 TypeScript                                                                 |
-| npm run build -w @mysterybox/admin                                                | 管理端任务报告 Next 16.4 独立生产构建成功（安全头更新后）；持久构建日志尚未保存             |
-| npm run test:ui -w @mysterybox/admin -- --grep 'real proxy'                       | 1/1，实际运行的 Next 代理拒绝未列路由和 16KB 以上登录正文；这是 HTTP 请求测试，不启动浏览器 |
-| PLAYWRIGHT_EXECUTABLE_PATH=/usr/bin/chromium npm run test:ui -w @mysterybox/admin | 浏览器启动被运行环境 socket 限制阻塞，未进入 UI 断言；五个 UI 用例仍未验证                  |
-
-证据：[单元与类型日志](qa/admin-unit-verification.log)、[实际代理日志](qa/admin-proxy-verification.log)。这些结果不证明管理员角色、真实 Nest 后端报表、MongoDB、OTP 浏览器流或生产部署已通过。后续代码变更还需重跑对应检查。
-
-### 当前 API 与 MongoDB 局部证据（2026-10-14 约 07:49 UTC）
-
-核心实现任务报告：恢复后的 API 领域/安全测试 17 项通过，供应商适配器测试 33 项通过。适配器测试使用 stub/mock，不是实际 Vercel、PayPal 或 Resend 调用。完整 npm run check 与 HTTP 集成尚未提供最终结果，不把这些分组加总当成最终全套验收。
-
-真实 MongoDB 8.0.17 单节点 replica-set 测试取得退出码 0，1/1、0 失败、0 跳过。原运行 stdout 已复制到[Mongo 副本集日志](qa/mongo-replica-verification.log)，测试代码为 apps/api/test/mongo.test.ts。它不是 MemoryStore 测试，当前记录不宣称完整生产拓扑已验证。
+[Mongo 副本集日志](qa/mongo-replica-verification.log)记录退出成功、1/1、0 失败、0 跳过。代码为 apps/api/test/mongo.test.ts，使用真正的 mongod 8.0.17 单节点 replica set，并非 MemoryStore。
 
 具体覆盖：
 
-- 索引初始化/ready 与重复 insert 行为。
-- 两个 Mongo 连接竞争同一业务 guard，20 次更新无丢失。
-- 领域回调抛错后的事务回滚。
-- 未 seed 目录拒绝，写入 16 工具与版本后加载。
-- 同订单并发 capture 返回同一 Box，模拟供应商 capture 只调用一次。
-- 关闭一个客户端后以新连接重开，仍能读取已完成 Box。
+- 索引初始化/ready、重复 insert、两连接同 guard 的 20 次并发更新。
+- 抛错回滚、未 seed 拒绝、16 工具与目录版本加载。
+- 同订单并发模拟 capture 同一 Box，provider capture 只调用一次。
+- 启动连接该 Mongo 的真实 Nest HTTP 进程：member 403，测试库赋 admin 后 200，撤回后同一会话 403。
+- 未提供可选访客标识的业务请求不写可选 activity。
+- 关闭客户端并完整停止/启动该 mongod 副本集后，重连读取已有 Box。
 
-这没有测试 mongod 进程重启、网络分区、UnknownTransactionCommitResult 故障注入、真实扣款、生产备份恢复或跨进程 webhook 队列恢复；仍保留为后续验收项。局部命令与证据汇总在 [component-verification.json](qa/component-verification.json)。
+角色测试在隔离测试库中修改角色，不等于实际 admin:role CLI 或生产授予权限已执行。UnknownTransactionCommitResult 的回调不重放检查属于 API 模拟故障测试，不是 Mongo 集群网络分区注入。多节点故障切换、生产备份恢复、真实供应商和完整队列宕机恢复仍需独立验收。
+
+### Web 与 Admin 浏览器
+
+[Web 浏览器日志](qa/web-browser-verification.log)：npm run test:e2e，8/8，包含 Free/刷新、显式 demo Premium、demo OTP/claim/收藏、目录空态、窄屏/跳转导航、reduced-motion、加载防重复提交、关闭可选统计。测试前检查三供应商都是 demo；其中加载测试会局部拦截网络制造等待，不伪装真实支付或模型。
+
+[Admin 浏览器日志](qa/admin-browser-verification.log)：npm run test:ui -w @mysterybox/admin，6/6。五个 UI 用例通过测试路由 fixture 展示匿名/member/admin、报告日期、空数据/窄屏和会话失效；这些数字只存在测试夹具，生产界面不预置假统计。第六项直接访问运行中的 Next 代理，验证 allowlist 与 16 KiB 拒绝。真正 Nest/Mongo 的角色检查证据在上面的 Mongo HTTP 测试，不把 fixture UI 当成后端授权证明。
+
+Web 8/8 浏览器运行发生在移除未使用的 shadcn CLI、将其 MIT CSS 逐字节移入本地源码之前；不是新 lockfile/样式位置之后的浏览器重跑。当前等待该依赖整理后的完整安装、构建与审计证据。
+
+此前环境中 Chromium 启动限制和第一次 UI 断言失败均是中间尝试，后续原生运行及修复复测已取得上述通过结果。不是所有环境都能直接启动 Chromium；CI 与公网部署仍需自己的运行证据。
+
+单元/构建的原始局部证据仍保留：[Admin 单元/类型](qa/admin-unit-verification.log)、[早先 Admin 代理](qa/admin-proxy-verification.log)。Web 初始 TypeScript/12 项单元/独立 Next 16.4 构建来自任务保留工具输出，未捏造原始 stdout；最新 Web 单元已增至 17 项。详见 [component-verification.json](qa/component-verification.json)。
 
 ## 2. 历史结果（不可转用为当前通过）
 

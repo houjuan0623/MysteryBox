@@ -8,23 +8,16 @@ import type {
   ProviderConfig,
 } from "./contracts";
 export * from "./contracts";
-export {
-  DemoAiProvider,
-  VercelAiProvider,
-  validateGeneratedBox,
-} from "./ai";
+export { DemoAiProvider, VercelAiProvider, validateGeneratedBox } from "./ai";
 export { DemoEmailProvider, ResendEmailProvider } from "./email";
-export {
-  DemoPaymentProvider,
-  PayPalProvider,
-  validatePayPalOrder,
-} from "./paypal";
+export { DemoPaymentProvider, PayPalProvider, validatePayPalOrder } from "./paypal";
 /** 明确选择模式，不因密钥缺失静默退回模拟成功。 */
 export function createProviders(
   config: ProviderConfig,
   fetchImpl: typeof fetch = fetch,
 ): { ai: AiProvider; payments: PaymentProvider; email: EmailProvider } {
-  if (!["demo", "vercel"].includes(config.aiMode)) throw new Error("Only demo or Vercel AI Gateway is supported by the application");
+  if (!["demo", "vercel"].includes(config.aiMode))
+    throw new Error("Only demo or Vercel AI Gateway is supported by the application");
   return {
     ai:
       config.aiMode === "demo"

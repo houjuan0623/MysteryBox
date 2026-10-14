@@ -127,16 +127,11 @@ test("20 actual attempts is a hard limit even with minimal successful usage", as
   let calls = 0;
   const f = fixture((async () => {
     calls++;
-    return new Response(
-      JSON.stringify({ usage: { input_tokens: 1, output_tokens: 1 } }),
-    );
+    return new Response(JSON.stringify({ usage: { input_tokens: 1, output_tokens: 1 } }));
   }) as typeof fetch);
   try {
     for (let i = 0; i < 20; i++) await f.guard.fetch(LIVE_ENDPOINT, request());
-    await assert.rejects(
-      f.guard.fetch(LIVE_ENDPOINT, request()),
-      code("ATTEMPT_LIMIT"),
-    );
+    await assert.rejects(f.guard.fetch(LIVE_ENDPOINT, request()), code("ATTEMPT_LIMIT"));
     assert.equal(calls, 20);
   } finally {
     f.cleanup();
@@ -154,14 +149,9 @@ test("$1 limit reserves worst-case tokens before sending", async () => {
     const large = request({ input: "x".repeat(500_000) });
     await f.guard.fetch(LIVE_ENDPOINT, large);
     await f.guard.fetch(LIVE_ENDPOINT, large);
-    await assert.rejects(
-      f.guard.fetch(LIVE_ENDPOINT, large),
-      code("BUDGET_LIMIT"),
-    );
+    await assert.rejects(f.guard.fetch(LIVE_ENDPOINT, large), code("BUDGET_LIMIT"));
     assert.equal(calls, 2);
-    assert.ok(
-      f.guard.snapshot().attempts.every((a) => a.state === "succeeded"),
-    );
+    assert.ok(f.guard.snapshot().attempts.every((a) => a.state === "succeeded"));
   } finally {
     f.cleanup();
   }

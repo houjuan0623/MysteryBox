@@ -44,10 +44,7 @@ test("a retry retains its idempotency key; changed inputs get a new key", () => 
   };
   const first = client.requestKey("free", brief);
   assert.equal(first, client.requestKey("free", brief));
-  assert.notEqual(
-    first,
-    client.requestKey("free", { ...brief, goal: "Another goal" }),
-  );
+  assert.notEqual(first, client.requestKey("free", { ...brief, goal: "Another goal" }));
 });
 test("completed requests reset their key without dropping access tokens", () => {
   const first = client.requestKey("free", { interest: "student" });
@@ -112,8 +109,7 @@ test("API failures preserve the service error and safely tolerate non-JSON error
     new Response("<html>unavailable</html>", { status: 503 });
   await assert.rejects(
     client.api("/config"),
-    (error) =>
-      error.status === 503 && error.message.includes("Please try again"),
+    (error) => error.status === 503 && error.message.includes("Please try again"),
   );
 });
 test("price formatter displays the configured one-time USD amount", () => {
@@ -185,4 +181,55 @@ test("enabled analytics adds only a random session UUID header to normal API cal
   };
   await client.api("/config");
   assert.match(headers["x-analytics-visitor"], /^[\da-f-]{36}$/i);
+});
+
+test("analytics server snapshot is unknown until the browser preference is read", () => {
+  assert.equal(analytics.analyticsServerSnapshot(), "loading");
+  assert.equal(analytics.analyticsPreference(), "loading");
+  assert.equal(analytics.analyticsAllowed(), false);
+  enableAnalyticsWindow();
+  assert.equal(analytics.analyticsPreference(), "enabled");
+  analytics.setAnalyticsAllowed(false);
+  assert.equal(analytics.analyticsPreference(), "disabled");
+});
+test("reading a saved opt-out clears a stale session visitor", () => {
+  const preferences = enableAnalyticsWindow();
+  assert.ok(analytics.analyticsVisitor());
+  preferences.set(analytics.ANALYTICS_PREFERENCE_KEY, "off");
+  assert.equal(analytics.analyticsVisitor(), null);
+  assert.equal(sessionStorage.getItem(analytics.ANALYTICS_VISITOR_KEY), null);
+});
+test("Do Not Track changes clear a visitor created earlier in the session", () => {
+  enableAnalyticsWindow();
+  assert.ok(analytics.analyticsVisitor());
+  window.navigator.doNotTrack = "1";
+  assert.equal(analytics.analyticsPreference(), "do-not-track");
+  assert.equal(analytics.analyticsVisitor(), null);
+  assert.equal(sessionStorage.getItem(analytics.ANALYTICS_VISITOR_KEY), null);
+});
+test("unavailable preference storage fails closed", () => {
+  enableAnalyticsWindow();
+  window.localStorage.getItem = () => {
+    throw new Error("Storage unavailable");
+  };
+  assert.equal(analytics.analyticsPreference(), "unavailable");
+  assert.equal(analytics.analyticsVisitor(), null);
+});
+test("an opt-out stops this tab even when saving the preference fails", async () => {
+  enableAnalyticsWindow();
+  assert.ok(analytics.analyticsVisitor());
+  window.localStorage.setItem = () => {
+    throw new Error("Quota exceeded");
+  };
+  assert.equal(analytics.setAnalyticsAllowed(false), false);
+  assert.equal(analytics.analyticsAllowed(), false);
+  assert.equal(analytics.analyticsVisitor(), null);
+  assert.equal(sessionStorage.getItem(analytics.ANALYTICS_VISITOR_KEY), null);
+  let headers;
+  globalThis.fetch = async (_url, options) => {
+    headers = options.headers;
+    return new Response("{}", { status: 200 });
+  };
+  await client.api("/config");
+  assert.equal(headers["x-analytics-visitor"], undefined);
 });

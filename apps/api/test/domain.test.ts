@@ -70,10 +70,7 @@ test("server controls price and captures exactly once under concurrent requests"
     count++;
     return capture(input);
   };
-  assert.equal(
-    briefSchema.safeParse({ ...brief(), amountCents: 1 }).success,
-    false,
-  );
+  assert.equal(briefSchema.safeParse({ ...brief(), amountCents: 1 }).success, false);
   const order = await service.createOrder(brief(), randomUUID());
   assert.equal(order.amountCents, 299);
   const results = await Promise.all(
@@ -84,10 +81,9 @@ test("server controls price and captures exactly once under concurrent requests"
   assert.equal(new Set(results.map((r) => r.box.id)).size, 1);
   assert.equal(results[0]!.box.tools.length, 3);
   assert.equal(count, 1);
-  await assert.rejects(
-    service.captureOrder(order.orderId, "stolen", undefined, true),
-    { code: "ORDER_NOT_FOUND" },
-  );
+  await assert.rejects(service.captureOrder(order.orderId, "stolen", undefined, true), {
+    code: "ORDER_NOT_FOUND",
+  });
   await assert.rejects(service.captureOrder(order.orderId, order.accessToken), {
     code: "PAYMENT_MODE",
   });
@@ -116,8 +112,7 @@ test("paid order remains paid after AI failure and retry does not charge again",
     "completed",
   );
   assert.equal(
-    (await service.orderStatus(order.orderId, order.accessToken))
-      .generationStatus,
+    (await service.orderStatus(order.orderId, order.accessToken)).generationStatus,
     "failed",
   );
   fail = false;
@@ -156,10 +151,9 @@ test("capture association cannot be reused for another order", async () => {
   const a = await service.createOrder(brief(), randomUUID()),
     b = await service.createOrder(brief(), randomUUID());
   await service.captureOrder(a.orderId, a.accessToken, undefined, true);
-  await assert.rejects(
-    service.captureOrder(b.orderId, b.accessToken, undefined, true),
-    { code: "CAPTURE_CONFLICT" },
-  );
+  await assert.rejects(service.captureOrder(b.orderId, b.accessToken, undefined, true), {
+    code: "CAPTURE_CONFLICT",
+  });
 });
 test("email failure preserves the box and permits an independent idempotent retry", async () => {
   const { service, providers } = fixture();
@@ -183,13 +177,8 @@ test("email failure preserves the box and permits an independent idempotent retr
   assert.ok(result.box.id);
   fail = false;
   assert.equal(
-    (
-      await service.emailBox(
-        result.box.id,
-        "test@example.com",
-        result.accessToken,
-      )
-    ).status,
+    (await service.emailBox(result.box.id, "test@example.com", result.accessToken))
+      .status,
     "demo",
   );
   await service.emailBox(result.box.id, "test@example.com", result.accessToken);
@@ -209,10 +198,9 @@ test("one-time codes have attempt limit, expire, and cannot be reused", async ()
   );
   const other = await service.requestCode("two@example.com");
   await service.verifyCode(other.challengeId, other.developmentCode!);
-  await assert.rejects(
-    service.verifyCode(other.challengeId, other.developmentCode!),
-    { code: "INVALID_CODE" },
-  );
+  await assert.rejects(service.verifyCode(other.challengeId, other.developmentCode!), {
+    code: "INVALID_CODE",
+  });
   const expired = await service.requestCode("three@example.com");
   const record = (await store.get<Record<string, unknown>>(
     "challenges",
@@ -235,10 +223,9 @@ test("two-account history, favorites, guest claim and logout stay isolated", asy
   await assert.rejects(service.readBox(result.box.id, undefined, b.user), {
     code: "BOX_NOT_FOUND",
   });
-  await assert.rejects(
-    service.claim(result.box.id, result.accessToken, b.user),
-    { code: "BOX_NOT_FOUND" },
-  );
+  await assert.rejects(service.claim(result.box.id, result.accessToken, b.user), {
+    code: "BOX_NOT_FOUND",
+  });
   const guest = await service.free(brief(), randomUUID());
   await service.claim(guest.box.id, guest.accessToken, b.user);
   assert.equal((await service.history(b.user)).length, 1);

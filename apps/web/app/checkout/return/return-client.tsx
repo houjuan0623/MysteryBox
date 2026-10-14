@@ -4,11 +4,7 @@ import { Card } from "@/components/ui/card";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import type {
-  BoxResponse,
-  CheckoutResponse,
-  PublicConfig,
-} from "@mysterybox/shared";
+import type { BoxResponse, CheckoutResponse, PublicConfig } from "@mysterybox/shared";
 import {
   api,
   clearRequestKey,
@@ -78,8 +74,7 @@ export function CheckoutReturn() {
       void complete(record);
     }
   }, [search]);
-  const canRetry =
-    order && (order.demo || search.get("token") === order.paypalOrderId);
+  const canRetry = order && (order.demo || search.get("token") === order.paypalOrderId);
   return (
     <section className="site-container checkout-page">
       <Card
@@ -96,14 +91,12 @@ export function CheckoutReturn() {
               ? "PAYPAL SANDBOX CHECKOUT"
               : "YOUR PREMIUM DISCOVERY"}
         </div>
-        <h1>
-          {order?.demo ? "A little more possibility." : "Let’s open your box."}
-        </h1>
+        <h1>{order?.demo ? "A little more possibility." : "Let’s open your box."}</h1>
         {order?.demo ? (
           <>
             <p>
-              Explore a premium box with three tool recommendations,
-              ready-to-use prompts, and a connected workflow.
+              Explore a premium box with three tool recommendations, ready-to-use prompts,
+              and a connected workflow.
             </p>
             <div className="checkout-summary">
               <span>Premium discovery · one box</span>
@@ -112,8 +105,8 @@ export function CheckoutReturn() {
             <div className="demo-checkout-notice">
               <strong>This is a simulated payment.</strong>
               <span>
-                No payment details are collected and no money will be charged.
-                The displayed price is for the demo experience.
+                No payment details are collected and no money will be charged. The
+                displayed price is for the demo experience.
               </span>
             </div>
           </>
@@ -130,9 +123,7 @@ export function CheckoutReturn() {
           {busy ? (
             <Spinner
               label={
-                order?.demo
-                  ? "Curating your premium box…"
-                  : "Confirming your order…"
+                order?.demo ? "Curating your premium box…" : "Confirming your order…"
               }
             />
           ) : canRetry ? (

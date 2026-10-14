@@ -27,9 +27,7 @@ export function ToolCard({
     <Card className="tool-card gap-0 rounded-xl p-6 shadow-none">
       <CardHeader className="gap-0 p-0">
         <div className="tool-card-top">
-          <span className={`tool-avatar ${color}`}>
-            {tool.name.slice(0, 2)}
-          </span>
+          <span className={`tool-avatar ${color}`}>{tool.name.slice(0, 2)}</span>
           <span className="tool-category">{tool.category}</span>
           {onFavorite && (
             <Button

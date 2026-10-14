@@ -1,9 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { isIP } from "node:net";
-import {
-  MAX_REQUEST_BYTES,
-  readLimitedBody,
-} from "@mysterybox/shared/src/body";
+import { MAX_REQUEST_BYTES, readLimitedBody } from "@mysterybox/shared/src/body";
 import { signClientIdentity } from "@mysterybox/shared/src/proxy";
 import { NextRequest, NextResponse } from "next/server";
 export const runtime = "nodejs";
@@ -17,13 +14,9 @@ async function proxy(
   const endpoint = path.join("/");
   const allowed =
     request.method === "GET"
-      ? ["admin/summary", "admin/users", "admin/events", "me"].includes(
-          endpoint,
-        )
+      ? ["admin/summary", "admin/users", "admin/events", "me"].includes(endpoint)
       : request.method === "POST" &&
-        ["auth/request-code", "auth/verify-code", "auth/logout"].includes(
-          endpoint,
-        );
+        ["auth/request-code", "auth/verify-code", "auth/logout"].includes(endpoint);
   if (!allowed)
     return NextResponse.json(
       {
@@ -85,8 +78,7 @@ async function proxy(
   }
   // 只向内部 API 转发会话 cookie，不传播同源其它应用的任意 cookie。
   const session = request.cookies.get("mb_session")?.value;
-  if (session)
-    headers.set("cookie", `mb_session=${encodeURIComponent(session)}`);
+  if (session) headers.set("cookie", `mb_session=${encodeURIComponent(session)}`);
   let body: ArrayBuffer | undefined;
   if (!["GET", "HEAD"].includes(request.method)) {
     const declared = request.headers.get("content-length");
@@ -145,8 +137,7 @@ async function proxy(
       {
         error: {
           code: "API_UNAVAILABLE",
-          message:
-            "The administration service is unavailable. Please try again shortly.",
+          message: "The administration service is unavailable. Please try again shortly.",
         },
       },
       { status: 503 },
