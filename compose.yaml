@@ -1,0 +1,14 @@
+# 本地开发专用单节点副本集；仅绑定回环地址，不是生产安全配置。
+services:
+  mongo:
+    image: mongo:8.0
+    command: ['mongod', '--replSet', 'rs0', '--bind_ip_all', '--nounixsocket']
+    ports: ['127.0.0.1:27017:27017']
+    volumes: ['mysterybox_mongo:/data/db']
+    healthcheck:
+      test: ['CMD-SHELL', 'mongosh --quiet --eval "try { rs.status().ok } catch(e) { rs.initiate({_id: \"rs0\", members: [{_id: 0, host: \"localhost:27017\"}] }).ok }"']
+      interval: 5s
+      timeout: 5s
+      retries: 20
+volumes:
+  mysterybox_mongo:

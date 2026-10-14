@@ -1,0 +1,23 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @mysterybox/admin@0.1.0 test
+> node --test test/*.test.mjs
+
+✔ default window is seven UTC calendar days across month boundaries (2.267867ms)
+✔ selected dates include both complete UTC calendar days (0.463405ms)
+✔ date validation rejects invalid dates, reversed and excessive windows (0.309258ms)
+✔ missing and invalid timestamps do not invent sign-in activity (14.893562ms)
+✔ exactly 31 days is accepted, 32 days is rejected (0.243808ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 105.999331
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> @mysterybox/admin@0.1.0 typecheck
+> tsc --noEmit
+
